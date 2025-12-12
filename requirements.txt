@@ -12,6 +12,9 @@ supabase
 # Google Gemini for embeddings and LLM
 google-generativeai
 
+# Local LLM support (Ollama)
+ollama
+
 # Web Scraping (Reading Layer)
 beautifulsoup4
 lxml

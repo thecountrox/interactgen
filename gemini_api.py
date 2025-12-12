@@ -8,6 +8,7 @@ import os
 import logging
 from typing import List, Dict, Optional
 import google.generativeai as genai
+from rate_limiter import rate_limit, get_usage_stats
 
 logger = logging.getLogger(__name__)
 
@@ -39,6 +40,9 @@ async def generate_embedding(text: str, model: str = "models/embedding-001") -> 
     Note: Gemini's embedding-001 produces 768-dimensional vectors
     """
     try:
+        # Apply rate limiting if in trial mode
+        await rate_limit()
+        
         result = genai.embed_content(
             model=model,
             content=text,
@@ -62,6 +66,9 @@ async def generate_query_embedding(text: str, model: str = "models/embedding-001
         List of floats representing the embedding vector
     """
     try:
+        # Apply rate limiting if in trial mode
+        await rate_limit()
+        
         result = genai.embed_content(
             model=model,
             content=text,
@@ -96,6 +103,9 @@ async def call_gemini_with_context(
         Dictionary with suggestions and actions
     """
     try:
+        # Apply rate limiting if in trial mode
+        await rate_limit()
+        
         # Initialize the model
         llm = genai.GenerativeModel(model)
         
@@ -218,6 +228,9 @@ async def call_gemini_simple(
         Generated text response
     """
     try:
+        # Apply rate limiting if in trial mode
+        await rate_limit()
+        
         # Initialize the model with optional system instruction
         if system_instruction:
             llm = genai.GenerativeModel(
@@ -296,6 +309,9 @@ async def generate_chatbot_response(
         Chatbot response string
     """
     try:
+        # Apply rate limiting if in trial mode
+        await rate_limit()
+        
         llm = genai.GenerativeModel(model)
         
         # Build conversation context

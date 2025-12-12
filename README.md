@@ -25,20 +25,33 @@ A sophisticated browser automation agent with a 3-layer architecture: **Reading 
 
 - **Backend**: Python FastAPI
 - **Database**: Supabase (PostgreSQL + pgvector)
-- **LLM**: Google Gemini API
+- **LLM**: Google Gemini API **or** Local Models (Ollama)
 - **Automation**: Playwright
 - **Browser Extension**: Chrome Manifest V3
+
+## ✨ Key Features
+
+- **🧠 RAG-Powered Analysis**: Learns from past interactions using vector embeddings
+- **💬 Proactive Tutoring**: Detects knowledge gaps and offers contextual help
+- **🏠 Local LLM Support**: Run completely offline with Ollama (optional)
+- **📝 Background Learning**: Automatically stores interactions for future reference
+- **🚦 Smart Rate Limiting**: Automatic API quota management for Gemini free tier
+- **⚡ Real-time Communication**: WebSocket-based chat for instant assistance
+- **🔍 Intelligent Page Analysis**: LLM-powered evaluation of web pages
 
 ## Setup
 
 ### 1. Install Dependencies
 
 ```bash
-# Create virtual environment
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
+# Using uv (recommended - 10-100x faster)
+uv venv
+source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+uv pip install -r requirements.txt
 
-# Install requirements
+# Or using pip
+python -m venv venv
+source venv/bin/activate
 pip install -r requirements.txt
 
 # Install Playwright browsers
@@ -55,7 +68,7 @@ Run the SQL setup script in your Supabase SQL Editor:
 
 This will create:
 - `profiles` table for user data
-- `memories` table for RAG with vector embeddings
+- `memories` table for RAG with vector embeddings (768-dimensional)
 - Helper functions for similarity search
 
 ### 3. Environment Variables
@@ -70,18 +83,37 @@ Required variables:
 - `SUPABASE_URL`: Your Supabase project URL
 - `SUPABASE_KEY`: Your Supabase anon/service key
 - `GEMINI_API_KEY`: Your Google Gemini API key
+- `TRIAL_GEMINI_TOKEN`: Set to `true` for free tier (enables rate limiting)
 
 ### 4. Run the Server
 
 ```bash
-# Development mode with auto-reload
-python main.py
+# Using uv (recommended)
+uv run main.py
 
 # Or using uvicorn directly
 uvicorn main:app --reload --host 0.0.0.0 --port 8000
 ```
 
 The server will be available at `http://localhost:8000`
+
+### 5. Rate Limiting (Free Tier)
+
+If using Gemini's free tier, enable rate limiting to avoid quota errors:
+
+```bash
+# Add to .env
+TRIAL_GEMINI_TOKEN=true
+```
+
+This enforces:
+- 15 requests/minute
+- 1,500 requests/day
+- 4 second minimum delay
+
+**Check status:** `curl http://localhost:8000/api/rate-limit-status`
+
+📚 **See:** `RATE_LIMIT_QUICKSTART.md` for details
 
 ## API Documentation
 
@@ -98,6 +130,9 @@ Health check and service info
 
 #### `GET /health`
 Detailed health status
+
+#### `GET /api/rate-limit-status`
+Current API rate limiting statistics
 
 #### `POST /analyze`
 Analyze page context using the Judge layer
@@ -167,13 +202,27 @@ ws.send(JSON.stringify({
 6. **Actions Layer** (Playwright) executes automation
 7. **WebSocket** sends real-time tips to user
 
+## 📚 Documentation
+
+- **[Quick Start](QUICK_START.md)** - Get up and running fast
+- **[Ollama Quick Start](OLLAMA_QUICKSTART.md)** - 🏠 Run locally with Ollama
+- **[Rate Limiting](RATE_LIMIT_QUICKSTART.md)** - Free tier quota management
+- **[Local Models Guide](LOCAL_MODELS_GUIDE.md)** - Complete local setup guide
+- **[Memory Worker Guide](MEMORY_WORKER_GUIDE.md)** - Background learning system
+- **[Tertiary Chat Guide](TERTIARY_CHAT_GUIDE.md)** - Proactive tutoring
+- **[Gemini API Guide](GEMINI_GUIDE.md)** - LLM integration details
+- **[Project Summary](PROJECT_SUMMARY.md)** - Complete architecture overview
+
 ## TODO / Next Steps
 
-- [ ] Implement actual embedding generation in `log_interaction_for_memory()`
-- [ ] Complete Judge layer with Gemini API integration
-- [ ] Add vector similarity search in `judge_page_context()`
+- [x] ~~Implement actual embedding generation~~ ✅
+- [x] ~~Complete Judge layer with Gemini API integration~~ ✅
+- [x] ~~Add vector similarity search~~ ✅
+- [x] ~~Implement rate limiting~~ ✅
+- [x] ~~Background memory processing~~ ✅
+- [x] ~~Proactive chat/tutoring system~~ ✅
+- [x] ~~Local LLM support (Ollama)~~ ✅
 - [ ] Build Chrome extension (Manifest V3)
 - [ ] Implement Playwright actions executor
 - [ ] Add authentication and user management
-- [ ] Implement rate limiting
 - [ ] Add monitoring and analytics

@@ -16,16 +16,43 @@ import dotenv
 
 dotenv.load_dotenv()
 
+# Configure logging early
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 # Supabase client
 from supabase import create_client, Client
 
-# Gemini API integration
-from gemini_api import (
-    generate_embedding,
-    call_gemini_with_context,
-    generate_chatbot_response
-)
+# Conditional LLM/Embedding API import based on USE_LOCAL_LLM
+USE_LOCAL_LLM = os.getenv("USE_LOCAL_LLM", "false").lower() == "true"
+
+if USE_LOCAL_LLM:
+    logger.info("🏠 Using LOCAL LLM (Ollama)")
+    from ollama_api import (
+        generate_embedding,
+        call_gemini_with_context,
+        generate_chatbot_response,
+        check_ollama_status
+    )
+    # Check Ollama status on startup
+    ollama_status = check_ollama_status()
+    if not ollama_status['available']:
+        logger.error(f"❌ Ollama not available: {ollama_status.get('error')}")
+        logger.error("   Install: curl -fsSL https://ollama.com/install.sh | sh")
+        logger.error(f"   Pull models: ollama pull {os.getenv('OLLAMA_LLM_MODEL', 'llama3.2:3b-instruct-q4_K_M')}")
+    else:
+        logger.info(f"✓ Ollama connected: {ollama_status['host']}")
+        logger.info(f"  Available models: {', '.join(ollama_status['models'][:3])}")
+else:
+    logger.info("☁️  Using CLOUD LLM (Gemini API)")
+    from gemini_api import (
+        generate_embedding,
+        call_gemini_with_context,
+        generate_chatbot_response
+    )
+
+# Rate Limiter (only used for Gemini API)
+from rate_limiter import get_usage_stats
 
 # Judge Engine
 from judge_engine import evaluate_page, store_interaction_memory
@@ -35,10 +62,6 @@ from tertiary_chat import analyze_and_nudge, handle_chat_query
 
 # Memory Worker (Background Learning)
 from memory_worker import process_memory_background, process_interaction_memory
-
-# Configure logging
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
 
 # ============================================================================
 # Configuration & Initialization
@@ -358,6 +381,17 @@ async def health_check():
             "supabase": supabase_status,
             "websocket_connections": len(connection_manager.active_connections)
         }
+    }
+
+
+@app.get("/api/rate-limit-status")
+async def rate_limit_status():
+    """Get current rate limit usage statistics"""
+    stats = get_usage_stats()
+    
+    return {
+        "timestamp": datetime.utcnow().isoformat(),
+        "rate_limiting": stats
     }
 
 
