@@ -123,7 +123,52 @@ Once running, visit:
 
 ## API Endpoints
 
-### REST Endpoints
+### User Management
+
+#### `POST /user/onboard`
+Create a new user profile
+
+**Request Body:**
+```json
+{
+  "username": "johndoe",
+  "personality_type": "analytical",
+  "technical_level": "intermediate"
+}
+```
+
+**Response (201):**
+```json
+{
+  "id": "550e8400-e29b-41d4-a716-446655440000",
+  "username": "johndoe",
+  "personality_type": "analytical",
+  "technical_level": "intermediate",
+  "created_at": "2025-12-12T10:30:00Z",
+  "updated_at": "2025-12-12T10:30:00Z"
+}
+```
+
+#### `GET /user/{user_id}`
+Retrieve user profile by ID
+
+#### `PUT /user/{user_id}/preferences`
+Update user preferences (supports partial updates)
+
+**Request Body:**
+```json
+{
+  "personality_type": "creative",
+  "technical_level": "expert"
+}
+```
+
+#### `DELETE /user/{user_id}`
+Delete user account and all associated data
+
+> 📘 **Full Documentation**: See [USER_ENDPOINTS_GUIDE.md](markdown-files/USER_ENDPOINTS_GUIDE.md) for complete API reference, examples, and integration guides.
+
+### Page Analysis
 
 #### `GET /`
 Health check and service info

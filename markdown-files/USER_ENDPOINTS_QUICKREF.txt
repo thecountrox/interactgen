@@ -1,0 +1,197 @@
+┌─────────────────────────────────────────────────────────────────────┐
+│                    USER ENDPOINTS QUICK REFERENCE                   │
+└─────────────────────────────────────────────────────────────────────┘
+
+BASE URL: http://localhost:8000
+
+┌─────────────────────────────────────────────────────────────────────┐
+│ 1. ONBOARD USER                                                     │
+├─────────────────────────────────────────────────────────────────────┤
+│ POST /user/onboard                                                  │
+│                                                                     │
+│ Request:                                                            │
+│   {                                                                 │
+│     "username": "johndoe",          // Required (3-50 chars)       │
+│     "personality_type": "analytical", // Optional                  │
+│     "technical_level": "intermediate" // Optional (default)        │
+│   }                                                                 │
+│                                                                     │
+│ Response (201 Created):                                            │
+│   {                                                                 │
+│     "id": "uuid-here",                                             │
+│     "username": "johndoe",                                         │
+│     "personality_type": "analytical",                              │
+│     "technical_level": "intermediate",                             │
+│     "created_at": "2025-12-12T10:30:00Z",                         │
+│     "updated_at": "2025-12-12T10:30:00Z"                          │
+│   }                                                                 │
+│                                                                     │
+│ Errors:                                                            │
+│   400: Invalid technical_level                                     │
+│   409: Username already taken                                      │
+│   500: Server error                                                │
+└─────────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────────┐
+│ 2. GET USER PROFILE                                                 │
+├─────────────────────────────────────────────────────────────────────┤
+│ GET /user/{user_id}                                                 │
+│                                                                     │
+│ Response (200 OK):                                                 │
+│   {                                                                 │
+│     "id": "uuid-here",                                             │
+│     "username": "johndoe",                                         │
+│     "personality_type": "analytical",                              │
+│     "technical_level": "intermediate",                             │
+│     "created_at": "2025-12-12T10:30:00Z",                         │
+│     "updated_at": "2025-12-12T10:30:00Z"                          │
+│   }                                                                 │
+│                                                                     │
+│ Errors:                                                            │
+│   404: User not found                                              │
+│   500: Server error                                                │
+└─────────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────────┐
+│ 3. UPDATE PREFERENCES                                               │
+├─────────────────────────────────────────────────────────────────────┤
+│ PUT /user/{user_id}/preferences                                     │
+│                                                                     │
+│ Request (partial update supported):                               │
+│   {                                                                 │
+│     "personality_type": "creative",  // Optional                   │
+│     "technical_level": "expert"      // Optional                   │
+│   }                                                                 │
+│                                                                     │
+│ Response (200 OK):                                                 │
+│   {                                                                 │
+│     "id": "uuid-here",                                             │
+│     "username": "johndoe",                                         │
+│     "personality_type": "creative",                                │
+│     "technical_level": "expert",                                   │
+│     "created_at": "2025-12-12T10:30:00Z",                         │
+│     "updated_at": "2025-12-12T10:35:00Z"                          │
+│   }                                                                 │
+│                                                                     │
+│ Errors:                                                            │
+│   400: Invalid input or no fields provided                         │
+│   404: User not found                                              │
+│   500: Server error                                                │
+└─────────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────────┐
+│ 4. DELETE USER                                                      │
+├─────────────────────────────────────────────────────────────────────┤
+│ DELETE /user/{user_id}                                              │
+│                                                                     │
+│ Response: 204 No Content (no body)                                 │
+│                                                                     │
+│ Note: Cascades to delete all user memories                         │
+│                                                                     │
+│ Errors:                                                            │
+│   404: User not found                                              │
+│   500: Server error                                                │
+└─────────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────────┐
+│ VALID VALUES                                                        │
+├─────────────────────────────────────────────────────────────────────┤
+│ personality_type (optional):                                       │
+│   • analytical  - Logical, data-driven                            │
+│   • creative    - Innovative, exploratory                         │
+│   • pragmatic   - Practical, goal-oriented                        │
+│   • social      - Collaborative, communicative                    │
+│                                                                     │
+│ technical_level (required):                                        │
+│   • beginner      - New to web development                        │
+│   • intermediate  - Some experience (default)                     │
+│   • advanced      - Experienced developer                         │
+│   • expert        - Professional/senior developer                 │
+└─────────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────────┐
+│ CURL EXAMPLES                                                       │
+├─────────────────────────────────────────────────────────────────────┤
+│ # Onboard user                                                     │
+│ curl -X POST http://localhost:8000/user/onboard \                 │
+│   -H "Content-Type: application/json" \                           │
+│   -d '{"username":"alice","technical_level":"advanced"}'          │
+│                                                                     │
+│ # Get profile                                                      │
+│ curl http://localhost:8000/user/{user_id}                         │
+│                                                                     │
+│ # Update preferences                                               │
+│ curl -X PUT http://localhost:8000/user/{user_id}/preferences \    │
+│   -H "Content-Type: application/json" \                           │
+│   -d '{"technical_level":"expert"}'                               │
+│                                                                     │
+│ # Delete user                                                      │
+│ curl -X DELETE http://localhost:8000/user/{user_id}               │
+└─────────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────────┐
+│ PYTHON EXAMPLES                                                     │
+├─────────────────────────────────────────────────────────────────────┤
+│ import requests                                                    │
+│                                                                     │
+│ # Onboard                                                          │
+│ r = requests.post("http://localhost:8000/user/onboard",           │
+│     json={"username": "alice", "technical_level": "advanced"})    │
+│ user_id = r.json()["id"]                                          │
+│                                                                     │
+│ # Get profile                                                      │
+│ profile = requests.get(f"http://localhost:8000/user/{user_id}")   │
+│     .json()                                                        │
+│                                                                     │
+│ # Update                                                           │
+│ requests.put(f"http://localhost:8000/user/{user_id}/preferences", │
+│     json={"technical_level": "expert"})                           │
+│                                                                     │
+│ # Delete                                                           │
+│ requests.delete(f"http://localhost:8000/user/{user_id}")          │
+└─────────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────────┐
+│ JAVASCRIPT/EXTENSION EXAMPLES                                       │
+├─────────────────────────────────────────────────────────────────────┤
+│ // Onboard user                                                    │
+│ const response = await fetch(                                      │
+│   'http://localhost:8000/user/onboard', {                         │
+│     method: 'POST',                                                │
+│     headers: {'Content-Type': 'application/json'},                │
+│     body: JSON.stringify({                                         │
+│       username: 'alice',                                           │
+│       technical_level: 'advanced'                                  │
+│     })                                                             │
+│   }                                                                │
+│ );                                                                 │
+│ const user = await response.json();                                │
+│                                                                     │
+│ // Store user ID in extension                                     │
+│ await chrome.storage.local.set({ userId: user.id });              │
+│                                                                     │
+│ // Get profile                                                     │
+│ const { userId } = await chrome.storage.local.get('userId');      │
+│ const profile = await fetch(                                       │
+│   `http://localhost:8000/user/${userId}`                          │
+│ ).then(r => r.json());                                            │
+└─────────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────────┐
+│ TESTING                                                             │
+├─────────────────────────────────────────────────────────────────────┤
+│ Manual test:  python test_user_manual.py                          │
+│ Unit tests:   pytest tests/test_user_endpoints.py -v              │
+│                                                                     │
+│ Start server: python main.py                                       │
+│ Server runs at: http://localhost:8000                             │
+│ API docs: http://localhost:8000/docs                              │
+└─────────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────────┐
+│ DOCUMENTATION                                                       │
+├─────────────────────────────────────────────────────────────────────┤
+│ Full guide:  markdown-files/USER_ENDPOINTS_GUIDE.md               │
+│ Summary:     markdown-files/USER_ENDPOINTS_SUMMARY.md             │
+│ Quick ref:   markdown-files/USER_ENDPOINTS_QUICKREF.txt (this)    │
+└─────────────────────────────────────────────────────────────────────┘
