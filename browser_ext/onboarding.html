@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>InteractGen Onboarding</title>
+  <style>
+    body { font-family: sans-serif; padding: 20px; max-width: 600px; margin: 0 auto; }
+    label { display: block; margin-top: 15px; font-weight: bold; }
+    input, select, textarea { width: 100%; padding: 8px; margin-top: 5px; box-sizing: border-box; }
+    button { margin-top: 20px; padding: 10px 20px; cursor: pointer; background-color: #4CAF50; color: white; border: none; }
+    button:hover { background-color: #45a049; }
+    #status { margin-top: 20px; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <h1>Welcome to InteractGen!</h1>
+  <p>Please complete this quick survey to personalize your experience.</p>
+  
+  <form id="onboarding-form">
+    <label for="technique_level">Technique Level:</label>
+    <select id="technique_level" required>
+      <option value="beginner">Beginner</option>
+      <option value="intermediate">Intermediate</option>
+      <option value="advanced">Advanced</option>
+    </select>
+
+    <label for="goal">Goal:</label>
+    <input type="text" id="goal" placeholder="e.g., Learn React, Improve productivity" required>
+
+    <label for="preference">Preference:</label>
+    <textarea id="preference" rows="3" placeholder="e.g., Visual learner, short summaries" required></textarea>
+
+    <button type="submit">Save Profile</button>
+  </form>
+
+  <div id="status"></div>
+
+  <script src="onboarding.js"></script>
+</body>
+</html>
