@@ -1,0 +1,39 @@
+/* styles.css */
+
+/* Highlight style for the "Hands" */
+.interactgen-highlight {
+  border: 3px solid yellow !important;
+  box-sizing: border-box;
+}
+
+/* Toast Notification for the "Whisperer" */
+#interactgen-toast-container {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 2147483647; /* Max z-index */
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  pointer-events: none; /* Let clicks pass through if not on toast */
+}
+
+.interactgen-toast {
+  background-color: #333;
+  color: #fff;
+  padding: 12px 20px;
+  border-radius: 4px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+  font-family: sans-serif;
+  font-size: 14px;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.3s, transform 0.3s;
+  pointer-events: auto;
+  max-width: 300px;
+}
+
+.interactgen-toast.show {
+  opacity: 1;
+  transform: translateY(0);
+}
