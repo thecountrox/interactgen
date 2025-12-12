@@ -11,10 +11,19 @@ from typing import Dict, List, Optional, Any
 from datetime import datetime
 
 from supabase import Client
-from gemini_api import generate_embedding, call_gemini_simple
 from bs4 import BeautifulSoup
 
 logger = logging.getLogger(__name__)
+
+# Conditional LLM/Embedding API import based on USE_LOCAL_LLM
+USE_LOCAL_LLM = os.getenv("USE_LOCAL_LLM", "false").lower() == "true"
+
+if USE_LOCAL_LLM:
+    from ollama_api import generate_embedding, call_gemini_simple
+    logger.info("🏠 Judge Engine using LOCAL LLM (Ollama)")
+else:
+    from gemini_api import generate_embedding, call_gemini_simple
+    logger.info("☁️  Judge Engine using CLOUD LLM (Gemini API)")
 
 # ============================================================================
 # Helper Functions

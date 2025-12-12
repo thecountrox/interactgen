@@ -7,14 +7,24 @@ This module analyzes page content and user profiles to identify learning opportu
 and sends proactive nudges via WebSocket.
 """
 
+import os
 import logging
 from typing import Dict, Optional, List, Any
 from datetime import datetime
 
-from gemini_api import call_gemini_simple
 from bs4 import BeautifulSoup
 
 logger = logging.getLogger(__name__)
+
+# Conditional LLM/Embedding API import based on USE_LOCAL_LLM
+USE_LOCAL_LLM = os.getenv("USE_LOCAL_LLM", "false").lower() == "true"
+
+if USE_LOCAL_LLM:
+    from ollama_api import call_gemini_simple
+    logger.info("🏠 Tertiary Chat using LOCAL LLM (Ollama)")
+else:
+    from gemini_api import call_gemini_simple
+    logger.info("☁️  Tertiary Chat using CLOUD LLM (Gemini API)")
 
 # ============================================================================
 # Knowledge Gap Detection

@@ -314,8 +314,20 @@ async def judge_page_context(context: PageContext) -> Dict:
         user_profile = supabase.table("profiles").select("*").eq("id", str(context.user_id)).execute()
         
         if not user_profile.data:
-            logger.warning(f"No profile found for user {context.user_id}")
-            user_context = {"technical_level": "intermediate"}
+            logger.warning(f"No profile found for user {context.user_id}, creating new profile...")
+            # Auto-create profile for new users
+            try:
+                new_profile = supabase.table("profiles").insert({
+                    "id": str(context.user_id),
+                    "username": f"user_{str(context.user_id)[:8]}",
+                    "technical_level": "intermediate",
+                    "personality_type": "analytical"
+                }).execute()
+                user_context = new_profile.data[0] if new_profile.data else {"technical_level": "intermediate"}
+                logger.info(f"✓ Created new profile for user {context.user_id}")
+            except Exception as e:
+                logger.error(f"Failed to create profile: {e}")
+                user_context = {"technical_level": "intermediate"}
         else:
             user_context = user_profile.data[0]
         

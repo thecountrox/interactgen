@@ -1,40 +1,88 @@
-# FastAPI Backend Requirements
-# ==============================
-
-# Core Framework
-fastapi
-uvicorn[standard]
-pydantic
-pydantic-settings
-# Supabase Client
-supabase
-
-# Google Gemini for embeddings and LLM
-google-generativeai
-
-# Local LLM support (Ollama)
-ollama
-
-# Web Scraping (Reading Layer)
-beautifulsoup4
-lxml
-html5lib
-
-# Browser Automation (Actions Layer)
-playwright
-
-# Utilities
-python-dotenv
-httpx
-python-multipart
-
-# Vector & ML support
-numpy
-
-# WebSocket support (included in FastAPI/uvicorn)
-websockets
-
-# Development & Testing
-pytest
-pytest-asyncio
-black
+annotated-doc==0.0.4
+annotated-types==0.7.0
+anyio==4.12.0
+beautifulsoup4==4.14.3
+black==25.12.0
+cachetools==6.2.2
+certifi==2025.11.12
+cffi==2.0.0
+charset-normalizer==3.4.4
+click==8.3.1
+cryptography==46.0.3
+deprecation==2.1.0
+dotenv==0.9.9
+fastapi==0.124.3
+google-ai-generativelanguage==0.6.15
+google-api-core==2.28.1
+google-api-python-client==2.187.0
+google-auth==2.43.0
+google-auth-httplib2==0.2.1
+google-generativeai==0.8.5
+googleapis-common-protos==1.72.0
+greenlet==3.3.0
+grpcio==1.76.0
+grpcio-status==1.71.2
+h11==0.16.0
+h2==4.3.0
+hpack==4.1.0
+html5lib==1.1
+httpcore==1.0.9
+httplib2==0.31.0
+httptools==0.7.1
+httpx==0.28.1
+hyperframe==6.1.0
+idna==3.11
+iniconfig==2.3.0
+lxml==6.0.2
+multidict==6.7.0
+mypy-extensions==1.1.0
+numpy==2.3.5
+ollama==0.6.1
+packaging==25.0
+pathspec==0.12.1
+pip==25.3
+platformdirs==4.5.1
+playwright==1.57.0
+pluggy==1.6.0
+postgrest==2.25.1
+propcache==0.4.1
+proto-plus==1.26.1
+protobuf==5.29.5
+pyasn1==0.6.1
+pyasn1-modules==0.4.2
+pycparser==2.23
+pydantic==2.12.5
+pydantic-core==2.41.5
+pydantic-settings==2.12.0
+pyee==13.0.0
+pygments==2.19.2
+pyjwt==2.10.1
+pyparsing==3.2.5
+pytest==9.0.2
+pytest-asyncio==1.3.0
+python-dotenv==1.2.1
+python-multipart==0.0.20
+pytokens==0.3.0
+pyyaml==6.0.3
+realtime==2.25.1
+requests==2.32.5
+rsa==4.9.1
+six==1.17.0
+soupsieve==2.8
+starlette==0.50.0
+storage3==2.25.1
+strenum==0.4.15
+supabase==2.25.1
+supabase-auth==2.25.1
+supabase-functions==2.25.1
+tqdm==4.67.1
+typing-extensions==4.15.0
+typing-inspection==0.4.2
+uritemplate==4.2.0
+urllib3==2.6.2
+uvicorn==0.38.0
+uvloop==0.22.1
+watchfiles==1.1.1
+webencodings==0.5.1
+websockets==15.0.1
+yarl==1.22.0

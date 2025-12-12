@@ -387,12 +387,20 @@ def check_ollama_status() -> Dict:
         client = ollama.Client(host=OLLAMA_HOST)
         
         # Try to list models
-        models = client.list()
+        models_response = client.list()
+        
+        # Extract model names safely (handle both 'name' and 'model' keys)
+        model_list = []
+        if 'models' in models_response:
+            for m in models_response['models']:
+                # Try different possible keys
+                model_name = m.get('name') or m.get('model') or str(m)
+                model_list.append(model_name)
         
         return {
             "available": True,
             "host": OLLAMA_HOST,
-            "models": [m['name'] for m in models.get('models', [])],
+            "models": model_list,
             "configured_llm": LLM_MODEL,
             "configured_embedding": EMBEDDING_MODEL
         }

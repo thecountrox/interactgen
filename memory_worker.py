@@ -7,15 +7,25 @@ This module handles the background task of converting interactions into
 embeddings and storing them in Supabase for future similarity search.
 """
 
+import os
 import logging
 from typing import Dict, Optional, Any
 from datetime import datetime
 from uuid import UUID
 
 from supabase import Client
-from gemini_api import generate_embedding
 
 logger = logging.getLogger(__name__)
+
+# Conditional LLM/Embedding API import based on USE_LOCAL_LLM
+USE_LOCAL_LLM = os.getenv("USE_LOCAL_LLM", "false").lower() == "true"
+
+if USE_LOCAL_LLM:
+    from ollama_api import generate_embedding
+    logger.info("🏠 Memory Worker using LOCAL LLM (Ollama)")
+else:
+    from gemini_api import generate_embedding
+    logger.info("☁️  Memory Worker using CLOUD LLM (Gemini API)")
 
 # ============================================================================
 # Memory Processing
