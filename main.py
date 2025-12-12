@@ -27,6 +27,15 @@ from gemini_api import (
     generate_chatbot_response
 )
 
+# Judge Engine
+from judge_engine import evaluate_page, store_interaction_memory
+
+# Tertiary Chat Layer (Proactive Tutor)
+from tertiary_chat import analyze_and_nudge, handle_chat_query
+
+# Memory Worker (Background Learning)
+from memory_worker import process_memory_background, process_interaction_memory
+
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -200,38 +209,38 @@ async def log_interaction_for_memory(
 ):
     """
     Background task to log the interaction for future memory embedding.
-    This will be used by the Judge layer to build context over time.
+    Uses the memory_worker module to process and store with embeddings.
     """
     try:
-        # Create a condensed summary for storage
-        content_summary = f"User visited: {url}"
+        logger.info(f"📝 Processing interaction for memory storage: {url}")
         
-        # Prepare interaction log
-        interaction_data = {
-            "user_id": user_id,
-            "url": url,
-            "content_length": len(html_content),
-            "metadata": metadata or {},
-            "logged_at": datetime.utcnow().isoformat()
-        }
+        # Extract page title if possible
+        from bs4 import BeautifulSoup
+        page_title = None
+        try:
+            soup = BeautifulSoup(html_content, 'html.parser')
+            page_title = soup.title.string if soup.title else None
+        except:
+            pass
         
-        # TODO: In production, this would:
-        # 1. Generate embedding via Gemini API
-        # 2. Store in memories table with embedding
-        # For now, we'll store a basic interaction log
+        # Create a concise summary
+        html_summary = html_content[:200] if html_content else ""
         
-        # Insert into a generic interaction_logs table (or prepare for embedding)
-        logger.info(f"📝 Logged interaction for user {user_id} on {url}")
-        logger.debug(f"Interaction data: {interaction_data}")
+        # Use the memory worker to process and store
+        success = await process_interaction_memory(
+            user_id=user_id,
+            url=url,
+            action="visited page",
+            supabase=supabase,
+            page_title=page_title,
+            html_summary=html_summary,
+            metadata=metadata
+        )
         
-        # Note: Actual embedding generation would happen here:
-        # embedding = await generate_embedding(content_summary)
-        # supabase.table("memories").insert({
-        #     "user_id": user_id,
-        #     "content": content_summary,
-        #     "embedding": embedding,
-        #     "metadata": interaction_data
-        # }).execute()
+        if success:
+            logger.info(f"✅ Memory stored successfully for {url}")
+        else:
+            logger.warning(f"⚠️ Failed to store memory (may be quota limited)")
         
     except Exception as e:
         logger.error(f"Error logging interaction: {e}")
@@ -243,14 +252,13 @@ async def log_interaction_for_memory(
 
 async def judge_page_context(context: PageContext) -> Dict:
     """
-    Placeholder for the Judge Layer logic.
-    This will use LLMs + RAG to decide UI modifications and actions.
+    Judge Layer: Analyzes page context using LLM + RAG.
     
-    TODO: Implement:
-    1. Query Supabase for relevant memories using vector similarity
-    2. Build context from user profile + memories
-    3. Send to LLM (Gemini) for analysis
-    4. Return suggested actions and UI modifications
+    Process:
+    1. Get user profile for personalization
+    2. Query vector memories for relevant context (RAG)
+    3. Send to Gemini LLM for intelligent analysis
+    4. Return structured decisions (what to hide, highlight, suggest)
     """
     
     try:
@@ -263,30 +271,59 @@ async def judge_page_context(context: PageContext) -> Dict:
         else:
             user_context = user_profile.data[0]
         
-        # TODO: Query vector memories for relevant context
-        # relevant_memories = await search_similar_memories(context, user_id)
+        # Call the Judge Engine with RAG + LLM
+        logger.info(f"🧠 Calling Judge Engine for {context.url}")
         
-        # TODO: Call Gemini API with context
-        # llm_response = await call_gemini_with_context(context, user_context, relevant_memories)
+        judge_result = await evaluate_page(
+            html=context.html_content,
+            user_id=str(context.user_id),
+            supabase=supabase,
+            url=context.url,
+            user_context=user_context
+        )
         
-        # Placeholder response
+        # Transform judge result into action format
+        actions = []
+        
+        # Add hide actions
+        for selector in judge_result.get("hidden_selectors", []):
+            actions.append({
+                "type": "hide",
+                "selector": selector,
+                "reason": "Reducing clutter based on your preferences"
+            })
+        
+        # Add highlight actions
+        for selector in judge_result.get("highlight_selectors", []):
+            actions.append({
+                "type": "highlight",
+                "selector": selector,
+                "reason": "Key element for your attention"
+            })
+        
+        # Add suggested action if present
+        suggestions = [judge_result.get("summary", "Page analyzed")]
+        if judge_result.get("suggested_action"):
+            suggestions.append(f"💡 {judge_result['suggested_action']}")
+            actions.append({
+                "type": "suggestion",
+                "message": judge_result["suggested_action"]
+            })
+        
         return {
-            "suggestions": [
-                f"Analyzing page: {context.url}",
-                f"User technical level: {user_context.get('technical_level', 'unknown')}",
-                "Ready to provide context-aware assistance"
-            ],
-            "actions": [
-                {"type": "highlight", "selector": "button.primary"},
-                {"type": "tooltip", "message": "This button submits the form"}
-            ]
+            "suggestions": suggestions,
+            "actions": actions,
+            "judge_result": judge_result  # Include raw judge output for debugging
         }
         
     except Exception as e:
-        logger.error(f"Error in judge layer: {e}")
+        logger.error(f"Error in judge layer: {e}", exc_info=True)
         return {
-            "suggestions": ["Error analyzing page"],
-            "actions": []
+            "suggestions": ["Error analyzing page - using fallback mode"],
+            "actions": [
+                {"type": "highlight", "selector": "button[type='submit']"},
+                {"type": "highlight", "selector": ".primary-button"}
+            ]
         }
 
 
@@ -346,15 +383,32 @@ async def analyze_page(context: PageContext, background_tasks: BackgroundTasks):
             context.metadata
         )
         
-        # Call the Judge layer (placeholder for now)
+        # Call the Judge layer
         analysis_result = await judge_page_context(context)
         
-        # Send helpful tip via WebSocket if user is connected
+        # Get user profile for tertiary chat
         user_id_str = str(context.user_id)
+        try:
+            user_profile = supabase.table("profiles").select("*").eq("id", user_id_str).execute()
+            user_prof_data = user_profile.data[0] if user_profile.data else {
+                "technical_level": "intermediate",
+                "username": "user"
+            }
+        except:
+            user_prof_data = {"technical_level": "intermediate", "username": "user"}
+        
+        # Tertiary Layer: Send proactive nudge if user is connected via WebSocket
         if user_id_str in connection_manager.active_connections:
-            await connection_manager.send_personal_message(
-                f"💡 Tip: I'm analyzing {context.url} for you!",
-                user_id_str
+            logger.info("🎯 Generating proactive nudge for connected user...")
+            
+            # Run tertiary chat analysis in background (non-blocking)
+            background_tasks.add_task(
+                analyze_and_nudge,
+                connection_manager,
+                user_id_str,
+                context.html_content,
+                user_prof_data,
+                context.url
             )
         
         return AnalysisResponse(
@@ -396,11 +450,34 @@ async def websocket_endpoint(websocket: WebSocket, client_id: str):
             message_type = data.get("type", "message")
             
             if message_type == "query":
-                # Handle user query
+                # Handle user query using tertiary chat layer
                 user_message = data.get("message", "")
-                # TODO: Process query with LLM and send intelligent response
-                response = f"🤖 I received your query: '{user_message}'. Processing..."
-                await connection_manager.send_personal_message(response, client_id)
+                
+                # Get user profile
+                try:
+                    user_profile = supabase.table("profiles").select("*").eq("id", client_id).execute()
+                    user_prof = user_profile.data[0] if user_profile.data else {
+                        "username": client_id,
+                        "technical_level": "intermediate"
+                    }
+                except:
+                    user_prof = {"username": client_id, "technical_level": "intermediate"}
+                
+                # Get page context if available
+                page_context = data.get("page_context")
+                
+                # Generate intelligent response using tertiary chat
+                logger.info(f"💬 Processing chat query from {client_id}: {user_message}")
+                response = await handle_chat_query(
+                    user_message=user_message,
+                    user_profile=user_prof,
+                    page_context=page_context
+                )
+                
+                await connection_manager.send_personal_message(
+                    f"🤖 {response}",
+                    client_id
+                )
                 
             elif message_type == "feedback":
                 # Handle user feedback
@@ -445,6 +522,102 @@ async def broadcast_message(message: str):
 # ============================================================================
 
 @app.get("/connections")
+async def get_active_connections():
+    """Get list of active WebSocket connections (dev/debug only)"""
+    return {
+        "active_connections": list(connection_manager.active_connections.keys()),
+        "count": len(connection_manager.active_connections)
+    }
+
+
+@app.get("/memories/{user_id}")
+async def get_user_memories(user_id: str, limit: int = 10):
+    """
+    Get recent memories for a user.
+    
+    Args:
+        user_id: UUID of the user
+        limit: Maximum number of memories to return
+    """
+    try:
+        from memory_worker import get_user_memory_stats
+        
+        stats = await get_user_memory_stats(user_id, supabase)
+        
+        # Also get recent memories
+        result = supabase.table("memories").select("*").eq("user_id", user_id).order("created_at", desc=True).limit(limit).execute()
+        
+        return {
+            "user_id": user_id,
+            "stats": stats,
+            "recent_memories": result.data if result.data else []
+        }
+        
+    except Exception as e:
+        logger.error(f"Error fetching memories: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/memories/search")
+async def search_memories_endpoint(user_id: str, query: str, top_k: int = 5):
+    """
+    Search a user's memories using semantic similarity.
+    
+    Args:
+        user_id: UUID of the user
+        query: Search query (natural language)
+        top_k: Number of results to return
+    """
+    try:
+        from memory_worker import search_user_memories
+        
+        memories = await search_user_memories(
+            user_id=user_id,
+            query=query,
+            supabase=supabase,
+            top_k=top_k
+        )
+        
+        return {
+            "query": query,
+            "user_id": user_id,
+            "results": memories,
+            "count": len(memories)
+        }
+        
+    except Exception as e:
+        logger.error(f"Error searching memories: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/memories/create-test")
+async def create_test_memory_endpoint(user_id: str, scenario: str = "login"):
+    """
+    Create a test memory for development and testing.
+    
+    Args:
+        user_id: UUID of the user
+        scenario: Type of test (login, form, search, purchase)
+    """
+    try:
+        from memory_worker import create_test_memory
+        
+        success = await create_test_memory(
+            user_id=user_id,
+            supabase=supabase,
+            test_scenario=scenario
+        )
+        
+        return {
+            "success": success,
+            "user_id": user_id,
+            "scenario": scenario,
+            "message": "Test memory created" if success else "Failed to create test memory"
+        }
+        
+    except Exception as e:
+        logger.error(f"Error creating test memory: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
 async def get_active_connections():
     """Get list of active WebSocket connections (dev/debug only)"""
     return {

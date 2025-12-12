@@ -176,6 +176,69 @@ Format your response as JSON:
 
 def parse_gemini_response(response_text: str) -> Dict:
     """
+    Parse Gemini's text response into structured format.
+    
+    Attempts to extract JSON if present, otherwise creates a basic structure.
+    """
+    try:
+        # Try to find JSON in the response
+        import json
+        import re
+        
+        # Look for JSON block
+        json_match = re.search(r'```json\s*(.*?)\s*```', response_text, re.DOTALL)
+        if json_match:
+            return json.loads(json_match.group(1))
+        
+        # Try parsing the whole response as JSON
+        return json.loads(response_text)
+        
+    except:
+        # Fallback: return the text as a suggestion
+        return {
+            "suggestions": [response_text.strip()],
+            "actions": []
+        }
+
+
+async def call_gemini_simple(
+    prompt: str,
+    system_instruction: Optional[str] = None,
+    model: str = "gemini-1.5-flash"
+) -> str:
+    """
+    Simple Gemini API call with just a prompt.
+    
+    Args:
+        prompt: The user prompt/question
+        system_instruction: Optional system instruction for the model
+        model: Gemini model to use
+        
+    Returns:
+        Generated text response
+    """
+    try:
+        # Initialize the model with optional system instruction
+        if system_instruction:
+            llm = genai.GenerativeModel(
+                model,
+                system_instruction=system_instruction
+            )
+        else:
+            llm = genai.GenerativeModel(model)
+        
+        # Generate response
+        response = llm.generate_content(prompt)
+        
+        return response.text if response.text else ""
+        
+    except Exception as e:
+        logger.error(f"Error calling Gemini API: {e}")
+        return ""
+
+
+def parse_gemini_response(response_text: str) -> Dict:
+    """
     Parse Gemini's response into structured format.
     
     Args:
