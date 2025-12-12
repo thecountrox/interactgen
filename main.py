@@ -777,6 +777,23 @@ async def create_test_memory_endpoint(user_id: str, scenario: str = "login"):
         scenario: Type of test (login, form, search, purchase)
     """
     try:
+        # Auto-create profile if it doesn't exist (same as /analyze endpoint)
+        user_profile = supabase.table("profiles").select("*").eq("id", str(user_id)).execute()
+        
+        if not user_profile.data:
+            logger.info(f"Creating profile for test user {user_id}")
+            try:
+                supabase.table("profiles").insert({
+                    "id": str(user_id),
+                    "username": f"test_user_{str(user_id)[:8]}",
+                    "technical_level": "intermediate",
+                    "personality_type": "analytical"
+                }).execute()
+                logger.info(f"✓ Created profile for test user {user_id}")
+            except Exception as e:
+                logger.error(f"Failed to create test profile: {e}")
+                # Continue anyway - let foreign key constraint fail with clear error
+        
         from memory_worker import create_test_memory
         
         success = await create_test_memory(
