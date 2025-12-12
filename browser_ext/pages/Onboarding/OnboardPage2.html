@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Onboarding Wizard - Step 2 (FlowState Dark Mode)</title>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#22C55E",
+                        "background-light": "#f6f8f7",
+                        "background-dark": "#020904",
+                        "card-dark": "#0D1F12",
+                        "input-dark": "#050B06",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-white overflow-x-hidden">
+<div class="relative flex min-h-screen w-full flex-col items-center justify-center p-4">
+<!-- Main Card Container -->
+<div class="w-full max-w-[800px] flex flex-col bg-card-dark rounded-[32px] border border-white/10 shadow-[0_0_60px_rgba(34,197,94,0.15)] relative overflow-hidden">
+<!-- Progress Bar Section -->
+<div class="w-full px-8 pt-8 pb-4">
+<div class="flex justify-between items-center mb-2">
+<p class="text-xs font-bold tracking-widest text-[#9fb7a8] uppercase">Step 2 of 3</p>
+<p class="text-xs font-medium text-primary">66%</p>
+</div>
+<div class="w-full h-1.5 bg-[#1f2e23] rounded-full overflow-hidden">
+<div class="h-full bg-primary rounded-full" style="width: 66%"></div>
+</div>
+</div>
+<!-- Content Container -->
+<div class="flex flex-col gap-8 px-8 py-6 md:px-12 md:py-10">
+<!-- Header -->
+<div class="flex flex-col gap-2 text-center md:text-left">
+<h1 class="text-3xl md:text-4xl font-bold text-white tracking-tight">How should we help you?</h1>
+<p class="text-[#A5B4A8] text-lg font-normal">Tailor FlowState to your thinking style.</p>
+</div>
+<!-- Thinking Style Grid -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4 w-full">
+<!-- Option 1: Analytical -->
+<button class="group relative flex flex-col items-center justify-center aspect-square gap-4 rounded-2xl bg-[#152319] border border-white/5 p-6 hover:bg-[#1a2b20] hover:border-white/10 transition-all cursor-pointer text-left focus:outline-none focus:ring-2 focus:ring-primary/50">
+<div class="w-12 h-12 rounded-full bg-[#1f2e23] flex items-center justify-center group-hover:bg-[#2a3d30] transition-colors">
+<span class="material-symbols-outlined text-[#A5B4A8] text-2xl">analytics</span>
+</div>
+<p class="text-white text-base font-medium">Analytical</p>
+</button>
+<!-- Option 2: Visual (Selected) -->
+<button class="relative flex flex-col items-center justify-center aspect-square gap-4 rounded-2xl bg-[#152319] border-2 border-primary p-6 shadow-[0_4px_20px_rgba(34,197,94,0.1)] cursor-pointer text-left">
+<!-- Checkmark Badge -->
+<div class="absolute top-3 right-3 w-6 h-6 bg-primary rounded-full flex items-center justify-center shadow-sm">
+<span class="material-symbols-outlined text-black text-sm font-bold">check</span>
+</div>
+<div class="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center">
+<span class="material-symbols-outlined text-primary text-2xl">image</span>
+</div>
+<p class="text-white text-base font-bold">Visual</p>
+</button>
+<!-- Option 3: Cautious -->
+<button class="group relative flex flex-col items-center justify-center aspect-square gap-4 rounded-2xl bg-[#152319] border border-white/5 p-6 hover:bg-[#1a2b20] hover:border-white/10 transition-all cursor-pointer text-left focus:outline-none focus:ring-2 focus:ring-primary/50">
+<div class="w-12 h-12 rounded-full bg-[#1f2e23] flex items-center justify-center group-hover:bg-[#2a3d30] transition-colors">
+<span class="material-symbols-outlined text-[#A5B4A8] text-2xl">verified_user</span>
+</div>
+<p class="text-white text-base font-medium">Cautious</p>
+</button>
+</div>
+<!-- Input Section -->
+<div class="w-full mt-2">
+<label class="block mb-3">
+<span class="text-white text-base font-medium">What is your main focus right now?</span>
+</label>
+<div class="relative">
+<input class="w-full h-14 px-6 bg-input-dark border border-white/10 rounded-full text-white placeholder-[#5a6b60] focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all" placeholder="e.g., Deep Work, Research, Coding..." type="text"/>
+</div>
+</div>
+<!-- Footer Actions -->
+<div class="flex items-center justify-between mt-6 pt-6 border-t border-white/5">
+<a class="text-[#A5B4A8] hover:text-white text-sm font-medium transition-colors px-4 py-2" href="#">
+                        Back
+                    </a>
+<button class="bg-primary hover:bg-[#1ea851] text-black text-base font-bold py-3.5 px-10 rounded-full shadow-[0_0_15px_rgba(34,197,94,0.3)] hover:shadow-[0_0_25px_rgba(34,197,94,0.5)] transition-all transform active:scale-95 flex items-center gap-2">
+<span>Continue</span>
+<span class="material-symbols-outlined text-lg">arrow_forward</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Background decoration glow -->
+<div class="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-primary/5 rounded-full blur-[120px] -z-10 pointer-events-none"></div>
+</div>
+</body></html>

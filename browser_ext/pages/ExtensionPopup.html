@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Flow State Extension</title>
+<!-- Fonts and Icons -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Config -->
+<script id="tailwind-config">tailwind.config = {darkMode: "class", theme: {extend: {colors: {primary: "#36e27b", "primary-hover": "#1a6bd8", "background-light": "#f6f8f7", "background-dark": "#112117", "surface-dark": "#1e293b", "border-dark": "#334155", "text-secondary": "#94a3b8", "accent-green": "#10b981", "accent-red": "#ef4444"}, fontFamily: {display: "Inter"}, borderRadius: {DEFAULT: "0.25rem", lg: "0.5rem", xl: "0.75rem", full: "9999px"}, boxShadow: {glow: "0 0 20px rgba(37, 123, 244, 0.15)"}}}};</script>
+<style>
+        /* Custom scrollbar for webkit */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0f172a; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #334155; 
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #475569; 
+        }
+
+        /* Pulsing animation for status dot */
+        @keyframes pulse-ring {
+            0% { transform: scale(0.8); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
+            100% { transform: scale(0.8); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+        }
+        .status-pulse {
+            animation: pulse-ring 2s infinite;
+        }
+    </style>
+</head>
+<body class="bg-[#222] flex items-center justify-center min-h-screen font-display p-4">
+<!-- Browser Extension Popup Container (Fixed Dimensions) -->
+<div class="relative w-[400px] h-[600px] bg-background-light dark:bg-background-dark overflow-hidden shadow-2xl rounded-xl border border-gray-700 flex flex-col">
+<!-- Header -->
+<header class="flex items-center justify-between px-5 py-4 border-b border-gray-200 dark:border-border-dark bg-white dark:bg-background-dark sticky top-0 z-10">
+<div class="flex items-center gap-3">
+<div class="size-8 rounded-lg bg-gradient-to-br from-primary to-blue-600 flex items-center justify-center text-white shadow-glow">
+<span class="material-symbols-outlined text-[20px]">waves</span>
+</div>
+<div>
+<h1 class="text-slate-900 dark:text-white text-base font-bold leading-tight tracking-tight">Flow State</h1>
+<div class="flex items-center gap-1.5">
+<div class="w-2 h-2 rounded-full bg-accent-green status-pulse"></div>
+<span class="text-[10px] font-medium text-accent-green uppercase tracking-wider">System Online</span>
+</div>
+</div>
+</div>
+<div class="relative group cursor-pointer">
+<div class="size-9 rounded-full bg-surface-dark border border-border-dark overflow-hidden flex items-center justify-center" data-alt="User profile avatar showing initials or abstract gradient pattern">
+<span class="text-xs font-bold text-white">JD</span>
+</div>
+<!-- Tooltip -->
+<div class="absolute right-0 top-10 w-32 p-2 bg-surface-dark border border-border-dark rounded shadow-xl hidden group-hover:block z-20">
+<p class="text-xs text-text-secondary text-center">John Doe</p>
+</div>
+</div>
+</header>
+<!-- Main Scrollable Content -->
+<main class="flex-1 overflow-y-auto overflow-x-hidden">
+<!-- Section 1: The Judge (Analysis) -->
+<section class="p-5 border-b border-dashed border-border-dark/50">
+<div class="flex items-center justify-between mb-3">
+<h2 class="text-xs font-bold uppercase tracking-wider text-text-secondary">Current Page Analysis</h2>
+<span class="material-symbols-outlined text-text-secondary text-base">analytics</span>
+</div>
+<div class="bg-white dark:bg-surface-dark rounded-lg p-4 border border-gray-200 dark:border-border-dark shadow-sm">
+<p class="text-slate-700 dark:text-gray-300 text-sm leading-relaxed mb-4">
+                        Technical documentation regarding <span class="text-primary font-medium">React hooks</span> implementation and state management patterns.
+                    </p>
+<div class="flex flex-wrap gap-2">
+<div class="flex items-center gap-1.5 px-2.5 py-1 rounded bg-purple-500/10 border border-purple-500/20">
+<span class="material-symbols-outlined text-purple-400 text-[14px]">psychology</span>
+<span class="text-xs font-medium text-purple-400">Complexity: Advanced</span>
+</div>
+<div class="flex items-center gap-1.5 px-2.5 py-1 rounded bg-orange-500/10 border border-orange-500/20">
+<span class="material-symbols-outlined text-orange-400 text-[14px]">warning</span>
+<span class="text-xs font-medium text-orange-400">Gap: High</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Section 2: The Hands (Actions) -->
+<section class="p-5">
+<div class="flex items-center justify-between mb-3">
+<h2 class="text-xs font-bold uppercase tracking-wider text-text-secondary">Actions</h2>
+<span class="material-symbols-outlined text-text-secondary text-base">handyman</span>
+</div>
+<div class="space-y-1 mb-5">
+<!-- Toggle Item 1 -->
+<label class="flex items-center justify-between p-3 rounded-lg hover:bg-white/5 cursor-pointer transition-colors group">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-text-secondary group-hover:text-white transition-colors">visibility_off</span>
+<span class="text-sm font-medium text-slate-700 dark:text-gray-200">Hide Clutter</span>
+</div>
+<div class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox" value=""/>
+<div class="w-9 h-5 bg-gray-600 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-primary"></div>
+</div>
+</label>
+<!-- Toggle Item 2 -->
+<label class="flex items-center justify-between p-3 rounded-lg hover:bg-white/5 cursor-pointer transition-colors group">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-text-secondary group-hover:text-white transition-colors">highlight</span>
+<span class="text-sm font-medium text-slate-700 dark:text-gray-200">Highlight Key Info</span>
+</div>
+<div class="relative inline-flex items-center cursor-pointer">
+<input class="sr-only peer" type="checkbox" value=""/>
+<div class="w-9 h-5 bg-gray-600 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-primary"></div>
+</div>
+</label>
+<!-- Toggle Item 3 -->
+<label class="flex items-center justify-between p-3 rounded-lg hover:bg-white/5 cursor-pointer transition-colors group">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-text-secondary group-hover:text-white transition-colors">mouse</span>
+<span class="text-sm font-medium text-slate-700 dark:text-gray-200">Auto-Scroll</span>
+</div>
+<div class="relative inline-flex items-center cursor-pointer">
+<input class="sr-only peer" type="checkbox" value=""/>
+<div class="w-9 h-5 bg-gray-600 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-primary"></div>
+</div>
+</label>
+</div>
+<button class="w-full h-11 bg-primary hover:bg-primary-hover active:scale-[0.98] text-white text-sm font-bold rounded-lg shadow-lg shadow-blue-500/20 flex items-center justify-center gap-2 transition-all">
+<span class="material-symbols-outlined text-[20px]">play_circle</span>
+                    Execute Suggested Actions
+                </button>
+</section>
+<!-- Section 3: Recent Memories (Accordion) -->
+<section class="px-5 pb-5">
+<details class="group bg-surface-dark/50 border border-border-dark rounded-lg overflow-hidden" open="">
+<summary class="flex items-center justify-between p-3 cursor-pointer bg-surface-dark hover:bg-surface-dark/80 transition-colors list-none select-none">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-text-secondary text-sm">history</span>
+<span class="text-xs font-bold uppercase tracking-wider text-text-secondary">Recent Memories</span>
+</div>
+<span class="material-symbols-outlined text-text-secondary transition-transform duration-200 group-open:rotate-180">expand_more</span>
+</summary>
+<div class="border-t border-border-dark">
+<div class="flex items-center gap-3 p-3 hover:bg-white/5 cursor-pointer border-b border-border-dark/50 last:border-0">
+<div class="size-6 rounded bg-blue-500/10 flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-blue-400 text-[14px]">description</span>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="text-sm text-gray-200 truncate font-medium">Visited React Docs</span>
+<span class="text-[10px] text-text-secondary">2 mins ago</span>
+</div>
+</div>
+<div class="flex items-center gap-3 p-3 hover:bg-white/5 cursor-pointer border-b border-border-dark/50 last:border-0">
+<div class="size-6 rounded bg-green-500/10 flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-green-400 text-[14px]">check_circle</span>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="text-sm text-gray-200 truncate font-medium">Filled Login Form</span>
+<span class="text-[10px] text-text-secondary">15 mins ago</span>
+</div>
+</div>
+<div class="flex items-center gap-3 p-3 hover:bg-white/5 cursor-pointer border-b border-border-dark/50 last:border-0">
+<div class="size-6 rounded bg-gray-500/10 flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-gray-400 text-[14px]">code</span>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="text-sm text-gray-200 truncate font-medium">Analyzed GitHub Repo</span>
+<span class="text-[10px] text-text-secondary">1 hour ago</span>
+</div>
+</div>
+</div>
+</details>
+</section>
+</main>
+<!-- Footer -->
+<footer class="flex items-center justify-between px-5 py-3 bg-surface-dark border-t border-border-dark text-[10px]">
+<a class="flex items-center gap-1.5 text-text-secondary hover:text-white transition-colors" href="#">
+<span class="material-symbols-outlined text-[14px]">settings</span>
+<span>Settings</span>
+</a>
+<div class="font-mono text-slate-600 dark:text-slate-500 truncate max-w-[120px]" title="8f92-a7c1-4b3d-9e5f">
+                UUID: 8f92-a7c1...
+            </div>
+</footer>
+</div>
+</body></html>
