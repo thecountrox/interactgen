@@ -1,0 +1,37 @@
+# FastAPI Backend Requirements
+# ==============================
+
+# Core Framework
+fastapi
+uvicorn[standard]
+pydantic
+pydantic-settings
+# Supabase Client
+supabase
+
+# Google Gemini for embeddings and LLM
+google-generativeai
+
+# Web Scraping (Reading Layer)
+beautifulsoup4
+lxml
+html5lib
+
+# Browser Automation (Actions Layer)
+playwright
+
+# Utilities
+python-dotenv
+httpx
+python-multipart
+
+# Vector & ML support
+numpy
+
+# WebSocket support (included in FastAPI/uvicorn)
+websockets
+
+# Development & Testing
+pytest
+pytest-asyncio
+black
