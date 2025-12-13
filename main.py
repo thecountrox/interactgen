@@ -72,15 +72,6 @@ from utils.tertiary_chat import analyze_and_nudge, handle_chat_query
 # Memory Worker (Background Learning)
 from utils.memory_worker import process_memory_background, process_interaction_memory
 
-# Actions Layer (Playwright automation)
-from utils.actions_layer import (
-    execute_actions,
-    apply_ui_modifications,
-    get_page_info,
-    initialize as init_actions_layer,
-    shutdown as shutdown_actions_layer,
-)
-
 # ============================================================================
 # Configuration & Initialization
 # ============================================================================
@@ -118,23 +109,10 @@ async def lifespan(app: FastAPI):
         logger.error(f"Failed to initialize Supabase client: {e}")
         raise
 
-    # Initialize Actions Layer (Playwright)
-    try:
-        await init_actions_layer()
-        logger.info("✓ Actions Layer initialized")
-    except Exception as e:
-        logger.warning(f"⚠️ Actions Layer initialization warning: {e}")
-
     yield
 
     # Shutdown
     logger.info("🛑 Shutting down application...")
-
-    # Shutdown Actions Layer
-    try:
-        await shutdown_actions_layer()
-    except Exception as e:
-        logger.error(f"Error shutting down Actions Layer: {e}")
 
     logger.info("✓ Application shutdown complete")
     logger.info("Shutting down application...")
@@ -512,6 +490,7 @@ async def analyze_page(context: PageContext, background_tasks: BackgroundTasks):
             user_profile = (
                 supabase.table("profiles").select("*").eq("id", user_id_str).execute()
             )
+            print(user_profile)
             user_prof_data = (
                 user_profile.data[0]
                 if user_profile.data
@@ -548,121 +527,9 @@ async def analyze_page(context: PageContext, background_tasks: BackgroundTasks):
 
 
 # ============================================================================
-# Actions Endpoints (Playwright automation)
+# Actions are now handled client-side by the browser extension
+# Backend only provides analysis and action suggestions
 # ============================================================================
-
-
-class ActionRequest(BaseModel):
-    """Request model for executing actions"""
-
-    url: str = Field(..., description="Target page URL")
-    user_id: str = Field(..., description="User ID")
-    actions: List[Dict] = Field(..., description="List of actions to execute")
-    headless: bool = Field(default=False, description="Run browser in headless mode")
-
-    class Config:
-        json_schema_extra = {
-            "example": {
-                "url": "https://example.com",
-                "user_id": "user-123",
-                "headless": False,
-                "actions": [
-                    {"type": "click", "selector": "#submit-btn"},
-                    {
-                        "type": "fill",
-                        "selector": "input[name='email']",
-                        "value": "test@example.com",
-                    },
-                    {"type": "screenshot", "full_page": True},
-                ],
-            }
-        }
-
-
-@app.post("/api/execute-actions")
-async def execute_actions_endpoint(request: ActionRequest):
-    """
-    Execute browser actions using Playwright
-
-    - Receives action list from client
-    - Executes actions sequentially on target page
-    - Returns execution results
-    """
-    try:
-        logger.info(
-            f"📋 Executing {len(request.actions)} actions for user {request.user_id}"
-        )
-
-        results = await execute_actions(
-            url=request.url,
-            actions=request.actions,
-            user_id=request.user_id,
-            headless=request.headless,
-        )
-
-        return {
-            "success": True,
-            "message": f"Executed {results['success_count']}/{results['total_actions']} actions successfully",
-            "results": results,
-        }
-
-    except Exception as e:
-        logger.error(f"Error executing actions: {e}")
-        raise HTTPException(
-            status_code=500, detail=f"Action execution failed: {str(e)}"
-        )
-
-
-@app.post("/api/apply-ui-modifications")
-async def apply_ui_modifications_endpoint(
-    url: str,
-    user_id: str,
-    hidden_selectors: List[str] = [],
-    highlight_selectors: List[str] = [],
-):
-    """
-    Apply UI modifications (hide/highlight elements)
-
-    - Hides specified elements
-    - Highlights specified elements
-    - Usually called after Judge layer analysis
-    """
-    try:
-        results = await apply_ui_modifications(
-            url=url,
-            hidden_selectors=hidden_selectors,
-            highlight_selectors=highlight_selectors,
-            user_id=user_id,
-        )
-
-        return {
-            "success": True,
-            "message": "UI modifications applied",
-            "results": results,
-        }
-
-    except Exception as e:
-        logger.error(f"Error applying UI modifications: {e}")
-        raise HTTPException(status_code=500, detail=f"UI modification failed: {str(e)}")
-
-
-@app.get("/api/page-info")
-async def get_page_info_endpoint(url: str):
-    """
-    Get information about a page without modifying it
-
-    - Returns page title, URL, viewport, etc.
-    - Useful for debugging and verification
-    """
-    try:
-        info = await get_page_info(url)
-        return info
-
-    except Exception as e:
-        logger.error(f"Error getting page info: {e}")
-        raise HTTPException(
-            status_code=500, detail=f"Failed to get page info: {str(e)}"
-        )
 
 
 @app.websocket("/chat/{client_id}")

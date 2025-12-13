@@ -42,7 +42,7 @@ packaging==25.0
 pathspec==0.12.1
 pip==25.3
 platformdirs==4.5.1
-playwright==1.57.0
+# playwright==1.57.0  # Removed: Using client-side DOM manipulation instead
 pluggy==1.6.0
 postgrest==2.25.1
 propcache==0.4.1

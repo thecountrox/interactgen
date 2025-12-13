@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Icon Generator</title>
+</head>
+<body>
+  <canvas id="canvas" width="128" height="128"></canvas>
+  <script>
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    
+    // Draw gradient background
+    const gradient = ctx.createLinearGradient(0, 0, 128, 128);
+    gradient.addColorStop(0, '#3b82f6');
+    gradient.addColorStop(1, '#2563eb');
+    
+    // Rounded rectangle
+    ctx.fillStyle = gradient;
+    ctx.beginPath();
+    ctx.roundRect(0, 0, 128, 128, 24);
+    ctx.fill();
+    
+    // Draw waves
+    ctx.strokeStyle = 'white';
+    ctx.lineWidth = 6;
+    ctx.lineCap = 'round';
+    
+    const centerX = 64, centerY = 64;
+    
+    // Wave 1
+    ctx.beginPath();
+    ctx.moveTo(centerX - 32, centerY - 16);
+    ctx.quadraticCurveTo(centerX - 24, centerY - 24, centerX - 16, centerY - 16);
+    ctx.quadraticCurveTo(centerX - 8, centerY - 8, centerX, centerY - 16);
+    ctx.quadraticCurveTo(centerX + 8, centerY - 24, centerX + 16, centerY - 16);
+    ctx.quadraticCurveTo(centerX + 24, centerY - 8, centerX + 32, centerY - 16);
+    ctx.stroke();
+    
+    // Wave 2
+    ctx.beginPath();
+    ctx.moveTo(centerX - 32, centerY);
+    ctx.quadraticCurveTo(centerX - 24, centerY - 8, centerX - 16, centerY);
+    ctx.quadraticCurveTo(centerX - 8, centerY + 8, centerX, centerY);
+    ctx.quadraticCurveTo(centerX + 8, centerY - 8, centerX + 16, centerY);
+    ctx.quadraticCurveTo(centerX + 24, centerY + 8, centerX + 32, centerY);
+    ctx.stroke();
+    
+    // Wave 3
+    ctx.beginPath();
+    ctx.moveTo(centerX - 32, centerY + 16);
+    ctx.quadraticCurveTo(centerX - 24, centerY + 8, centerX - 16, centerY + 16);
+    ctx.quadraticCurveTo(centerX - 8, centerY + 24, centerX, centerY + 16);
+    ctx.quadraticCurveTo(centerX + 8, centerY + 8, centerX + 16, centerY + 16);
+    ctx.quadraticCurveTo(centerX + 24, centerY + 24, centerX + 32, centerY + 16);
+    ctx.stroke();
+    
+    // Generate downloads
+    setTimeout(() => {
+      [16, 48, 128].forEach(size => {
+        const tempCanvas = document.createElement('canvas');
+        tempCanvas.width = size;
+        tempCanvas.height = size;
+        const tempCtx = tempCanvas.getContext('2d');
+        tempCtx.drawImage(canvas, 0, 0, size, size);
+        
+        tempCanvas.toBlob(blob => {
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = `icon${size}.png`;
+          a.click();
+          URL.revokeObjectURL(url);
+        });
+      });
+      
+      alert('Icons generated! Check your downloads folder.');
+    }, 100);
+  </script>
+</body>
+</html>

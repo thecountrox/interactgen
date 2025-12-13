@@ -1,5 +1,19 @@
 // content.js
 
+console.log('FlowState: Content script loaded');
+
+// Listen for action execution requests from popup (set up immediately)
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  console.log('FlowState: Message received', message);
+  if (message?.type === 'executeActions' && message?.actions) {
+    console.log('FlowState: Executing actions from popup', message.actions);
+    applyDOMManipulations({ actions: message.actions });
+    sendResponse({ success: true });
+    return true;
+  }
+  return false;
+});
+
 // Ensure we run only after the page is fully loaded
 const init = async () => {
   if (document.readyState === 'loading') {
@@ -11,9 +25,11 @@ const init = async () => {
   const uuid = storage.user_uuid;
 
   if (!uuid) {
-    console.warn('InteractGen: No User UUID found. Please complete onboarding.');
+    console.warn('FlowState: No User UUID found. Please complete onboarding.');
     return;
   }
+
+  console.log('FlowState: Initialized with UUID', uuid);
 
   // Start the "Eyes" and "Hands"
   analyzePage(uuid);
@@ -25,7 +41,7 @@ const init = async () => {
 // --- The Eyes & Hands ---
 async function analyzePage(uuid) {
   try {
-    const textContent = document.body.innerText.substring(0, 5000);
+    const htmlContent = document.documentElement.outerHTML.slice(0, 50000);
     const currentUrl = window.location.href;
 
     const response = await chrome.runtime.sendMessage({
@@ -35,9 +51,13 @@ async function analyzePage(uuid) {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          uuid: uuid,
           url: currentUrl,
-          content: textContent
+          html_content: htmlContent,
+          user_id: uuid,
+          metadata: {
+            source: 'content-script',
+            captured_at: new Date().toISOString()
+          }
         })
       }
     });
@@ -49,12 +69,67 @@ async function analyzePage(uuid) {
     applyDOMManipulations(response.data || {});
 
   } catch (error) {
-    console.error('InteractGen Analysis Error:', error);
+    console.error('FlowState Analysis Error:', error);
   }
 }
 
 function applyDOMManipulations(data) {
-  // Hide selectors
+  // Handle actions array (from popup execution)
+  if (data.actions && Array.isArray(data.actions)) {
+    data.actions.forEach(action => {
+      const type = (action?.type || '').toLowerCase();
+      
+      if (type === 'hide' || type.includes('hide')) {
+        const selector = action.selector || action.target;
+        if (selector) {
+          try {
+            const elements = document.querySelectorAll(selector);
+            elements.forEach(el => el.style.display = 'none');
+            console.log(`✓ Hidden: ${selector} (${elements.length} elements)`);
+          } catch (e) {
+            console.warn(`Invalid hide selector: ${selector}`, e);
+          }
+        }
+      }
+      
+      if (type === 'highlight' || type.includes('highlight')) {
+        const selector = action.selector || action.target;
+        if (selector) {
+          try {
+            const elements = document.querySelectorAll(selector);
+            elements.forEach(el => {
+              el.style.outline = '3px solid #3b82f6';
+              el.style.outlineOffset = '2px';
+            });
+            console.log(`✓ Highlighted: ${selector} (${elements.length} elements)`);
+          } catch (e) {
+            console.warn(`Invalid highlight selector: ${selector}`, e);
+          }
+        }
+      }
+      
+      if (type === 'scroll' || type.includes('scroll')) {
+        const selector = action.selector || action.target;
+        if (selector) {
+          try {
+            const element = document.querySelector(selector);
+            if (element) {
+              element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+              console.log(`✓ Scrolled to: ${selector}`);
+            }
+          } catch (e) {
+            console.warn(`Invalid scroll selector: ${selector}`, e);
+          }
+        } else if (action.y !== undefined) {
+          window.scrollTo({ top: action.y, behavior: 'smooth' });
+          console.log(`✓ Scrolled to y: ${action.y}`);
+        }
+      }
+    });
+    return;
+  }
+  
+  // Legacy: Hide selectors
   if (data.hide_selectors && Array.isArray(data.hide_selectors)) {
     data.hide_selectors.forEach(selector => {
       try {
@@ -66,12 +141,12 @@ function applyDOMManipulations(data) {
     });
   }
 
-  // Highlight selectors
+  // Legacy: Highlight selectors
   if (data.highlight_selectors && Array.isArray(data.highlight_selectors)) {
     data.highlight_selectors.forEach(selector => {
       try {
         const elements = document.querySelectorAll(selector);
-        elements.forEach(el => el.classList.add('interactgen-highlight'));
+        elements.forEach(el => el.classList.add('flowstate-highlight'));
       } catch (e) {
         console.warn(`Invalid highlight selector: ${selector}`, e);
       }
@@ -91,7 +166,7 @@ function connectWebSocket(uuid) {
   socket = new WebSocket(`ws://localhost:8000/chat/${uuid}`);
 
   socket.onopen = () => {
-    console.log('InteractGen: WebSocket connected');
+    console.log('FlowState: WebSocket connected');
   };
 
   socket.onmessage = (event) => {
@@ -107,27 +182,27 @@ function connectWebSocket(uuid) {
   };
 
   socket.onclose = () => {
-    console.log('InteractGen: WebSocket disconnected. Reconnecting in 5s...');
+    console.log('FlowState: WebSocket disconnected. Reconnecting in 5s...');
     setTimeout(() => connectWebSocket(uuid), reconnectInterval);
   };
 
   socket.onerror = (error) => {
-    console.error('InteractGen: WebSocket error:', error);
+    console.error('FlowState: WebSocket error:', error);
     socket.close(); // Ensure onclose triggers
   };
 }
 
 // --- Toast Notification ---
 function showToast(message) {
-  let container = document.getElementById('interactgen-toast-container');
+  let container = document.getElementById('flowstate-toast-container');
   if (!container) {
     container = document.createElement('div');
-    container.id = 'interactgen-toast-container';
+    container.id = 'flowstate-toast-container';
     document.body.appendChild(container);
   }
 
   const toast = document.createElement('div');
-  toast.className = 'interactgen-toast';
+  toast.className = 'flowstate-toast';
   toast.textContent = message;
 
   container.appendChild(toast);

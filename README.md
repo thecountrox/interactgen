@@ -13,9 +13,10 @@ A sophisticated browser automation agent with a 3-layer architecture: **Reading 
 - Stores user context and learned patterns in Supabase (pgvector)
 - Makes intelligent decisions about UI modifications and actions
 
-### 3. **Actions Layer** (Playwright)
-- Executes browser automation
-- Performs actions based on Judge layer decisions
+### 3. **Browser Extension** (Client-side Actions)
+- Chrome extension executes DOM manipulations directly
+- No separate browser instance needed
+- Actions applied in real-time to user's current tab
 
 ### 4. **WebSocket Layer** (Helpful Chatbot)
 - Real-time communication with browser extension
@@ -26,8 +27,7 @@ A sophisticated browser automation agent with a 3-layer architecture: **Reading 
 - **Backend**: Python FastAPI
 - **Database**: Supabase (PostgreSQL + pgvector)
 - **LLM**: Google Gemini API **or** Local Models (Ollama)
-- **Automation**: Playwright
-- **Browser Extension**: Chrome Manifest V3
+- **Browser Extension**: Chrome Manifest V3 (client-side DOM manipulation)
 
 ## ✨ Key Features
 
@@ -53,9 +53,6 @@ uv pip install -r requirements.txt
 python -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
-
-# Install Playwright browsers
-playwright install
 ```
 
 ### 2. Configure Supabase

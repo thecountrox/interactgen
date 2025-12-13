@@ -1,13 +1,13 @@
 /* styles.css */
 
 /* Highlight style for the "Hands" */
-.interactgen-highlight {
+.flowstate-highlight {
   border: 3px solid yellow !important;
   box-sizing: border-box;
 }
 
 /* Toast Notification for the "Whisperer" */
-#interactgen-toast-container {
+#flowstate-toast-container {
   position: fixed;
   bottom: 20px;
   right: 20px;
@@ -18,7 +18,7 @@
   pointer-events: none; /* Let clicks pass through if not on toast */
 }
 
-.interactgen-toast {
+.flowstate-toast {
   background-color: #333;
   color: #fff;
   padding: 12px 20px;
@@ -33,7 +33,7 @@
   max-width: 300px;
 }
 
-.interactgen-toast.show {
+.flowstate-toast.show {
   opacity: 1;
   transform: translateY(0);
 }

@@ -16,18 +16,18 @@
 
 /* Extension-specific styles */
 @layer components {
-  .interactgen-highlight {
+  .flowstate-highlight {
     @apply border-4 border-yellow-400 box-border;
   }
 
-  .interactgen-toast {
+  .flowstate-toast {
     @apply bg-gray-800 text-white px-5 py-3 rounded shadow-lg text-sm;
     opacity: 0;
     transform: translateY(20px);
     transition: opacity 0.3s, transform 0.3s;
   }
 
-  .interactgen-toast.show {
+  .flowstate-toast.show {
     @apply opacity-100;
     transform: translateY(0);
   }
@@ -38,7 +38,7 @@
 }
 
 /* Toast container */
-#interactgen-toast-container {
+#flowstate-toast-container {
   position: fixed;
   bottom: 20px;
   right: 20px;
