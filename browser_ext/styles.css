@@ -37,3 +37,72 @@
   opacity: 1;
   transform: translateY(0);
 }
+
+/* ---- Base UI theme for extension pages ---- */
+:root {
+  --primary: #22C55E;
+  --bg-dark: #112117;
+  --bg-card: #1e293b;
+  --border-dark: #334155;
+  --text: #e5e7eb;
+  --text-muted: #94a3b8;
+}
+
+html.dark, body {
+  background: var(--bg-dark);
+  color: var(--text);
+  font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+}
+
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-dark);
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 44px;
+  padding: 0 16px;
+  border-radius: 10px;
+  border: 1px solid transparent;
+  background: var(--primary);
+  color: #0c1f15;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform .06s ease, box-shadow .2s ease, filter .2s ease;
+}
+.btn:active { transform: scale(0.98); }
+.btn.secondary {
+  background: transparent;
+  color: var(--text-muted);
+  border-color: var(--border-dark);
+}
+.input {
+  width: 100%;
+  height: 44px;
+  padding: 0 14px;
+  border-radius: 9999px;
+  border: 1px solid var(--border-dark);
+  background: #0f172a;
+  color: var(--text);
+}
+.label { font-size: 12px; color: var(--text); font-weight: 600; margin: 6px 0; }
+
+/* Utility shims for common Tailwind-like classes used */
+.rounded-lg { border-radius: 12px; }
+.rounded-full { border-radius: 9999px; }
+.shadow-2xl { box-shadow: 0 15px 40px rgba(0,0,0,0.35); }
+.border { border: 1px solid var(--border-dark); }
+.text-white { color: #fff; }
+.text-gray-200 { color: #e5e7eb; }
+.text-text-secondary { color: var(--text-muted); }
+.bg-surface-dark { background: var(--bg-card); }
+.bg-background-dark { background: var(--bg-dark); }
+.bg-primary { background: var(--primary); }
+.hover\:bg-primary-hover:hover { filter: brightness(1.1); }
+.material-symbols-outlined { font-family: 'Material Symbols Outlined'; font-weight: normal; font-style: normal; font-size: 24px; display: inline-block; line-height: 1; letter-spacing: normal; text-transform: none; white-space: nowrap; direction: ltr; }

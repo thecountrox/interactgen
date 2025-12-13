@@ -3,8 +3,10 @@
   "name": "InteractGen AI Agent",
   "version": "1.0",
   "description": "AI-powered browsing agent with backend integration.",
+  
   "permissions": [
     "activeTab",
+    "tabs",
     "storage",
     "scripting"
   ],
@@ -15,7 +17,7 @@
     "service_worker": "background.js"
   },
   "action": {
-    "default_popup": "popup.html"
+    "default_popup": "ExtensionPopup.html"
   },
   "content_scripts": [
     {
@@ -26,7 +28,16 @@
   ],
   "web_accessible_resources": [
     {
-      "resources": ["onboarding.html", "styles.css"],
+      "resources": [
+        "styles.css",
+        "tailwind.css",
+        "onboarding.html",
+        "OnboardPage1.html",
+        "OnboardPage2.html",
+        "OnboardPage3.html",
+        "ExtensionPopup.html",
+        "SettingsDashboard.html"
+      ],
       "matches": ["<all_urls>"]
     }
   ]

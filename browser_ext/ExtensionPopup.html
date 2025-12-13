@@ -10,10 +10,8 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-<!-- Tailwind CSS -->
-<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<!-- Tailwind Config -->
-<script id="tailwind-config">tailwind.config = {darkMode: "class", theme: {extend: {colors: {primary: "#36e27b", "primary-hover": "#1a6bd8", "background-light": "#f6f8f7", "background-dark": "#112117", "surface-dark": "#1e293b", "border-dark": "#334155", "text-secondary": "#94a3b8", "accent-green": "#10b981", "accent-red": "#ef4444"}, fontFamily: {display: "Inter"}, borderRadius: {DEFAULT: "0.25rem", lg: "0.5rem", xl: "0.75rem", full: "9999px"}, boxShadow: {glow: "0 0 20px rgba(37, 123, 244, 0.15)"}}}};</script>
+<!-- Styles -->
+<link rel="stylesheet" href="tailwind.css" />
 <style>
         /* Custom scrollbar for webkit */
         ::-webkit-scrollbar {
@@ -76,20 +74,19 @@
 <h2 class="text-xs font-bold uppercase tracking-wider text-text-secondary">Current Page Analysis</h2>
 <span class="material-symbols-outlined text-text-secondary text-base">analytics</span>
 </div>
-<div class="bg-white dark:bg-surface-dark rounded-lg p-4 border border-gray-200 dark:border-border-dark shadow-sm">
-<p class="text-slate-700 dark:text-gray-300 text-sm leading-relaxed mb-4">
-                        Technical documentation regarding <span class="text-primary font-medium">React hooks</span> implementation and state management patterns.
-                    </p>
-<div class="flex flex-wrap gap-2">
-<div class="flex items-center gap-1.5 px-2.5 py-1 rounded bg-purple-500/10 border border-purple-500/20">
-<span class="material-symbols-outlined text-purple-400 text-[14px]">psychology</span>
-<span class="text-xs font-medium text-purple-400">Complexity: Advanced</span>
-</div>
-<div class="flex items-center gap-1.5 px-2.5 py-1 rounded bg-orange-500/10 border border-orange-500/20">
-<span class="material-symbols-outlined text-orange-400 text-[14px]">warning</span>
-<span class="text-xs font-medium text-orange-400">Gap: High</span>
-</div>
-</div>
+                <div class="bg-white dark:bg-surface-dark rounded-lg p-4 border border-gray-200 dark:border-border-dark shadow-sm">
+    <div id="analysis-loader" class="flex items-center justify-between">
+        <div class="flex items-center gap-2 text-text-secondary text-sm">
+            <span class="material-symbols-outlined animate-spin text-[16px]">progress_activity</span>
+            <span>Analyzing current page…</span>
+        </div>
+    </div>
+    <p id="analysis-text" class="hidden text-slate-700 dark:text-gray-300 text-sm leading-relaxed mb-4"></p>
+    <div id="analysis-chips" class="hidden flex flex-wrap gap-2"></div>
+    <button id="analyze-btn" class="hidden mt-4 w-full h-9 bg-primary/20 hover:bg-primary/30 text-primary text-xs font-semibold rounded px-3 transition-all">
+        <span class="material-symbols-outlined text-[14px]" style="display: inline; vertical-align: middle; margin-right: 4px;">refresh</span>
+        Re-Analyze
+    </button>
 </div>
 </section>
 <!-- Section 2: The Hands (Actions) -->
@@ -191,4 +188,5 @@
             </div>
 </footer>
 </div>
+<script src="extension-popup.js"></script>
 </body></html>

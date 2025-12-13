@@ -154,12 +154,15 @@ app = FastAPI(
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Configure appropriately for production
+    allow_origins=[
+        "*",  # or be more specific
+        "chrome-extension://*",
+        "https://*"  # Add this for all extensions
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
 # ============================================================================
 # Pydantic Models
 # ============================================================================

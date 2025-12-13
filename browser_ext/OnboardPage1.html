@@ -11,30 +11,8 @@
 <!-- Material Symbols -->
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-<!-- Tailwind CSS -->
-<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<script id="tailwind-config">
-      tailwind.config = {
-        darkMode: "class",
-        theme: {
-          extend: {
-            colors: {
-              "primary": "#36e27b",
-              "background-light": "#f6f8f7",
-              "background-dark": "#112117",
-            },
-            fontFamily: {
-              "display": ["Spline Sans", "sans-serif"],
-              "body": ["Noto Sans", "sans-serif"]
-            },
-            borderRadius: {"DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px"},
-            boxShadow: {
-                "glow": "0 0 20px -5px rgba(54, 226, 123, 0.3)"
-            }
-          },
-        },
-      }
-    </script>
+<!-- Styles -->
+<link rel="stylesheet" href="tailwind.css" />
 </head>
 <body class="bg-background-light dark:bg-background-dark min-h-screen flex flex-col items-center justify-center p-4 font-display transition-colors duration-300">
 <div class="w-full max-w-[600px] flex flex-col gap-6">
@@ -107,11 +85,12 @@
 <button class="w-full sm:w-auto text-slate-500 dark:text-[#95c6a9] hover:text-slate-900 dark:hover:text-white font-medium text-sm py-3 px-6 rounded-full transition-colors order-2 sm:order-1">
                     Skip for now
                 </button>
-<button class="w-full flex-1 bg-primary hover:bg-emerald-400 text-[#0c1f15] font-bold text-base py-4 px-8 rounded-full shadow-lg hover:shadow-primary/40 transition-all transform active:scale-[0.98] flex items-center justify-center gap-2 order-1 sm:order-2">
+<a href="OnboardPage2.html" class="w-full flex-1 bg-primary hover:bg-emerald-400 text-[#0c1f15] font-bold text-base py-4 px-8 rounded-full shadow-lg hover:shadow-primary/40 transition-all transform active:scale-[0.98] flex items-center justify-center gap-2 order-1 sm:order-2">
                     Continue
                     <span class="material-symbols-outlined text-lg">arrow_forward</span>
-</button>
+</a>
 </div>
 </div>
 </div>
+<script src="onboard-page1.js"></script>
 </body></html>

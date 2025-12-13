@@ -9,27 +9,7 @@
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<script id="tailwind-config">
-        tailwind.config = {
-            darkMode: "class",
-            theme: {
-                extend: {
-                    colors: {
-                        "primary": "#22C55E",
-                        "background-light": "#f6f8f7",
-                        "background-dark": "#020904",
-                        "card-dark": "#0D1F12",
-                        "input-dark": "#050B06",
-                    },
-                    fontFamily: {
-                        "display": ["Inter", "sans-serif"]
-                    },
-                    borderRadius: {"DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px"},
-                },
-            },
-        }
-    </script>
+<link rel="stylesheet" href="tailwind.css" />
 </head>
 <body class="bg-background-light dark:bg-background-dark font-display text-white overflow-x-hidden">
 <div class="relative flex min-h-screen w-full flex-col items-center justify-center p-4">
@@ -91,17 +71,18 @@
 </div>
 <!-- Footer Actions -->
 <div class="flex items-center justify-between mt-6 pt-6 border-t border-white/5">
-<a class="text-[#A5B4A8] hover:text-white text-sm font-medium transition-colors px-4 py-2" href="#">
+<a class="text-[#A5B4A8] hover:text-white text-sm font-medium transition-colors px-4 py-2" href="OnboardPage1.html">
                         Back
                     </a>
-<button class="bg-primary hover:bg-[#1ea851] text-black text-base font-bold py-3.5 px-10 rounded-full shadow-[0_0_15px_rgba(34,197,94,0.3)] hover:shadow-[0_0_25px_rgba(34,197,94,0.5)] transition-all transform active:scale-95 flex items-center gap-2">
+<a href="OnboardPage3.html" class="bg-primary hover:bg-[#1ea851] text-black text-base font-bold py-3.5 px-10 rounded-full shadow-[0_0_15px_rgba(34,197,94,0.3)] hover:shadow-[0_0_25px_rgba(34,197,94,0.5)] transition-all transform active:scale-95 flex items-center gap-2">
 <span>Continue</span>
 <span class="material-symbols-outlined text-lg">arrow_forward</span>
-</button>
+</a>
 </div>
 </div>
 </div>
 <!-- Background decoration glow -->
 <div class="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-primary/5 rounded-full blur-[120px] -z-10 pointer-events-none"></div>
 </div>
+<script src="onboard-page2.js"></script>
 </body></html>

@@ -12,37 +12,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
 <!-- Tailwind CSS -->
-<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<!-- Theme Configuration -->
-<script id="tailwind-config">
-      tailwind.config = {
-        darkMode: "class",
-        theme: {
-          extend: {
-            colors: {
-              "primary": "#22C55E", // Vibrant Neon Green requested
-              "background-light": "#f6f8f7",
-              "background-dark": "#020904", // Deep Forest Black requested
-              "surface-card": "#0D1F12", // Dark Moss Green requested
-              "surface-inner": "#050B06", // Very dark container
-            },
-            fontFamily: {
-              "display": ["Inter", "sans-serif"]
-            },
-            borderRadius: {
-              "DEFAULT": "1rem", 
-              "lg": "2rem", 
-              "xl": "3rem", 
-              "full": "9999px"
-            },
-            boxShadow: {
-                "neon": "0 0 20px -5px rgba(34, 197, 94, 0.4)",
-                "card-glow": "0 0 60px -15px rgba(34, 197, 94, 0.15)",
-            }
-          },
-        },
-      }
-    </script>
+<link rel="stylesheet" href="tailwind.css" />
 <style>
         /* Custom utilities for the specific design feel */
         .glass-border {
@@ -106,13 +76,13 @@
 </div>
 <!-- Action Buttons -->
 <div class="w-full mt-10 flex flex-col gap-5">
-<button class="relative w-full py-4 bg-primary hover:bg-[#1eb053] text-black font-bold text-lg rounded-full shadow-neon hover:shadow-[0_0_30px_rgba(34,197,94,0.5)] transition-all duration-300 transform active:scale-[0.99] flex items-center justify-center gap-2 group">
-                            Open Dashboard
-                            <span class="material-symbols-outlined group-hover:translate-x-1 transition-transform" data-icon="arrow_forward">arrow_forward</span>
-</button>
-<button class="text-[#58685e] hover:text-white text-sm font-medium transition-colors">
-                            Close Tab
-                        </button>
+<a href="SettingsDashboard.html" class="relative w-full py-4 bg-primary hover:bg-[#1eb053] text-black font-bold text-lg rounded-full shadow-neon hover:shadow-[0_0_30px_rgba(34,197,94,0.5)] transition-all duration-300 transform active:scale-[0.99] flex items-center justify-center gap-2 group">
+              Open Dashboard
+              <span class="material-symbols-outlined group-hover:translate-x-1 transition-transform" data-icon="arrow_forward">arrow_forward</span>
+</a>
+<button id="close-tab" class="text-[#58685e] hover:text-white text-sm font-medium transition-colors">
+              Close Tab
+            </button>
 </div>
 </div>
 </div>
@@ -122,4 +92,5 @@
 </div>
 </div>
 </div>
+<script src="onboard-page3.js"></script>
 </body></html>

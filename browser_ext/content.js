@@ -28,24 +28,25 @@ async function analyzePage(uuid) {
     const textContent = document.body.innerText.substring(0, 5000);
     const currentUrl = window.location.href;
 
-    const response = await fetch('http://localhost:8000/analyze', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        uuid: uuid,
-        url: currentUrl,
-        content: textContent
-      })
+    const response = await chrome.runtime.sendMessage({
+      type: 'apiRequest',
+      path: '/analyze',
+      options: {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          uuid: uuid,
+          url: currentUrl,
+          content: textContent
+        })
+      }
     });
 
-    if (!response.ok) {
-      throw new Error(`Analysis failed: ${response.status}`);
+    if (!response?.ok) {
+      throw new Error(`Analysis failed: ${response?.status || 'unknown'}`);
     }
 
-    const data = await response.json();
-    applyDOMManipulations(data);
+    applyDOMManipulations(response.data || {});
 
   } catch (error) {
     console.error('InteractGen Analysis Error:', error);

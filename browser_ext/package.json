@@ -1,0 +1,12 @@
+{
+  "name": "interactgen-browser-extension",
+  "version": "1.0.0",
+  "description": "Browser extension for InteractGen",
+  "scripts": {
+    "build:css": "tailwindcss -i ./src/input.css -o ./tailwind.css --minify",
+    "watch:css": "tailwindcss -i ./src/input.css -o ./tailwind.css --watch"
+  },
+  "devDependencies": {
+    "tailwindcss": "^3.4.0"
+  }
+}
