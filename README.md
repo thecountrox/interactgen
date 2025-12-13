@@ -33,15 +33,15 @@ A sophisticated browser automation agent with a 3-layer architecture: **Reading 
 - **LLM**: Google Gemini API **or** Local Models (Ollama)
 - **Browser Extension**: Chrome Manifest V3 (client-side DOM manipulation)
 
-## ✨ Key Features
+## Key Features
 
-- **🧠 RAG-Powered Analysis**: Learns from past interactions using vector embeddings
-- **💬 Proactive Tutoring**: Detects knowledge gaps and offers contextual help
-- **🏠 Local LLM Support**: Run completely offline with Ollama (optional)
-- **📝 Background Learning**: Automatically stores interactions for future reference
-- **🚦 Smart Rate Limiting**: Automatic API quota management for Gemini free tier
-- **⚡ Real-time Communication**: WebSocket-based chat for instant assistance
-- **🔍 Intelligent Page Analysis**: LLM-powered evaluation of web pages
+- **RAG-Powered Analysis**: Learns from past interactions using vector embeddings
+- **Proactive Tutoring**: Detects knowledge gaps and offers contextual help
+- **Local LLM Support**: Run completely offline with Ollama (optional)
+- **Background Learning**: Automatically stores interactions for future reference
+- **Smart Rate Limiting**: Automatic API quota management for Gemini free tier
+- **Real-time Communication**: WebSocket-based chat for instant assistance
+- **Intelligent Page Analysis**: LLM-powered evaluation of web pages
 
 ## Setup
 
@@ -114,7 +114,7 @@ This enforces:
 
 **Check status:** `curl http://localhost:8000/api/rate-limit-status`
 
-📚 **See:** `RATE_LIMIT_QUICKSTART.md` for details
+**See:** `RATE_LIMIT_QUICKSTART.md` for details
 
 ## API Documentation
 
@@ -167,7 +167,7 @@ Update user preferences (supports partial updates)
 #### `DELETE /user/{user_id}`
 Delete user account and all associated data
 
-> 📘 **Full Documentation**: See [USER_ENDPOINTS_GUIDE.md](markdown-files/USER_ENDPOINTS_GUIDE.md) for complete API reference, examples, and integration guides.
+> **Full Documentation**: See [USER_ENDPOINTS_GUIDE.md](markdown-files/USER_ENDPOINTS_GUIDE.md) for complete API reference, examples, and integration guides.
 
 ### Page Analysis
 
@@ -248,10 +248,10 @@ ws.send(JSON.stringify({
 6. **Actions Layer** (Playwright) executes automation
 7. **WebSocket** sends real-time tips to user
 
-## 📚 Documentation
+## Documentation
 
 - **[Quick Start](QUICK_START.md)** - Get up and running fast
-- **[Ollama Quick Start](OLLAMA_QUICKSTART.md)** - 🏠 Run locally with Ollama
+- **[Ollama Quick Start](OLLAMA_QUICKSTART.md)** - Run locally with Ollama
 - **[Rate Limiting](RATE_LIMIT_QUICKSTART.md)** - Free tier quota management
 - **[Local Models Guide](LOCAL_MODELS_GUIDE.md)** - Complete local setup guide
 - **[Memory Worker Guide](MEMORY_WORKER_GUIDE.md)** - Background learning system
@@ -259,16 +259,3 @@ ws.send(JSON.stringify({
 - **[Gemini API Guide](GEMINI_GUIDE.md)** - LLM integration details
 - **[Project Summary](PROJECT_SUMMARY.md)** - Complete architecture overview
 
-## TODO / Next Steps
-
-- [x] ~~Implement actual embedding generation~~ ✅
-- [x] ~~Complete Judge layer with Gemini API integration~~ ✅
-- [x] ~~Add vector similarity search~~ ✅
-- [x] ~~Implement rate limiting~~ ✅
-- [x] ~~Background memory processing~~ ✅
-- [x] ~~Proactive chat/tutoring system~~ ✅
-- [x] ~~Local LLM support (Ollama)~~ ✅
-- [ ] Build Chrome extension (Manifest V3)
-- [ ] Implement Playwright actions executor
-- [ ] Add authentication and user management
-- [ ] Add monitoring and analytics
