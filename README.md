@@ -5,8 +5,6 @@ A sophisticated browser automation agent with a 3-layer architecture: **Reading 
 ## Team 13
 ### Prajol David ( RA2211003020539 )
 ### Akash K ( RA2211030020072 )
-### Pranav Arun S ( RA2211003010793 )
-
 
 ## Architecture
 
