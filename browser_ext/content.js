@@ -7,6 +7,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   console.log('FlowState: Message received', message);
   if (message?.type === 'executeActions' && message?.actions) {
     console.log('FlowState: Executing actions from popup', message.actions);
+    showExecutionOverlay();
     applyDOMManipulations({ actions: message.actions });
     sendResponse({ success: true });
     return true;
@@ -97,10 +98,15 @@ function applyDOMManipulations(data) {
         if (selector) {
           try {
             const elements = document.querySelectorAll(selector);
+            
+            // Add highlight class to selected elements
             elements.forEach(el => {
-              el.style.outline = '3px solid #3b82f6';
-              el.style.outlineOffset = '2px';
+              el.classList.add('flowstate-highlight');
             });
+            
+            // Dim everything else
+            dimNonHighlightedElements();
+            
             console.log(`✓ Highlighted: ${selector} (${elements.length} elements)`);
           } catch (e) {
             console.warn(`Invalid highlight selector: ${selector}`, e);
@@ -192,6 +198,70 @@ function connectWebSocket(uuid) {
   };
 }
 
+// Dim all elements except highlighted ones
+function dimNonHighlightedElements() {
+  // Get all direct children of body
+  const bodyChildren = Array.from(document.body.children);
+  
+  bodyChildren.forEach(child => {
+    // Skip if it's a FlowState element (overlay, toast, etc)
+    if (child.id && child.id.startsWith('flowstate-')) {
+      return;
+    }
+    
+    // Skip if this element or any of its children are highlighted
+    const hasHighlight = child.classList.contains('flowstate-highlight') || 
+                        child.querySelector('.flowstate-highlight');
+    
+    if (!hasHighlight) {
+      child.classList.add('flowstate-dimmed');
+    } else {
+      // For elements that contain highlights, dim their direct children that aren't highlighted
+      dimChildrenRecursively(child);
+    }
+  });
+}
+
+// Recursively dim children that aren't highlighted
+function dimChildrenRecursively(element) {
+  Array.from(element.children).forEach(child => {
+    const isHighlighted = child.classList.contains('flowstate-highlight');
+    const hasHighlightedChild = child.querySelector('.flowstate-highlight');
+    
+    if (!isHighlighted && !hasHighlightedChild) {
+      child.classList.add('flowstate-dimmed');
+    } else if (hasHighlightedChild) {
+      dimChildrenRecursively(child);
+    }
+  });
+}
+
+// --- Execution Overlay Animation ---
+function showExecutionOverlay() {
+  let overlay = document.getElementById('flowstate-execution-overlay');
+  if (!overlay) {
+    overlay = document.createElement('div');
+    overlay.id = 'flowstate-execution-overlay';
+    document.body.appendChild(overlay);
+  }
+
+  // Trigger animation
+  requestAnimationFrame(() => {
+    overlay.classList.add('active');
+  });
+
+  // Auto-fade after 2.5 seconds
+  setTimeout(() => {
+    overlay.classList.remove('active');
+    // Remove from DOM after transition
+    setTimeout(() => {
+      if (overlay.parentNode) {
+        overlay.parentNode.removeChild(overlay);
+      }
+    }, 300);
+  }, 2500);
+}
+
 // --- Toast Notification ---
 function showToast(message) {
   let container = document.getElementById('flowstate-toast-container');
@@ -228,5 +298,5 @@ function showToast(message) {
   }, 10000);
 }
 
-// Start everything
-init();
+// Don't start automatically - only execute when user triggers actions from popup
+// init();

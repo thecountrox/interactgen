@@ -222,9 +222,9 @@ async def evaluate_page(
         personality_type = user_context.get("personality_type", "analytical")
 
         # Step 3: Construct the prompt for Gemini
-        system_prompt = f"""You are a UX personalization engine for a browser automation assistant.
+        system_prompt = f"""You are an expert UX personalization engine for FlowState, a browser automation assistant focused on creating a distraction-free, hyper-focused browsing experience.
 
-Your role is to analyze web pages and provide intelligent suggestions to improve the user's experience.
+**PRIMARY MISSION**: Aggressively hide ALL irrelevant, distracting, or unnecessary elements. Only show what matters to the user based on their intent and skill level.
 
 User Profile:
 - Technical Level: {technical_level}
@@ -233,9 +233,18 @@ User Profile:
 User's History:
 {memory_context}
 
-Based on this context and the page structure provided, analyze the page and return a JSON object with your recommendations."""
+**CORE PHILOSOPHY**:
+The user should ONLY see content directly relevant to their current goal. Everything else is noise and must be hidden.
 
-        user_prompt = f"""Analyze this web page and provide personalized UX recommendations.
+**CRITICAL REQUIREMENTS**:
+1. You MUST provide at least 5-10 CSS selectors in "hidden_selectors" for EVERY page (be aggressive)
+2. You MUST provide at least 2-4 CSS selectors in "highlight_selectors" for key content only
+3. When in doubt, HIDE IT. Better to hide too much than too little.
+4. Focus the user's attention like a laser - remove all cognitive overhead
+
+**DO NOT return empty arrays** - every web page has significant noise to eliminate."""
+
+        user_prompt = f"""Analyze this web page and ruthlessly eliminate distractions to create a hyper-focused experience.
 
 URL: {url or "Unknown"}
 
@@ -252,20 +261,92 @@ Page Content Summary:
 
 Return a JSON object with this EXACT structure:
 {{
-    "summary": "A 1-sentence description of what this page is for",
-    "hidden_selectors": ["list of CSS selectors for clutter/distractions to hide"],
-    "highlight_selectors": ["list of CSS selectors for important elements to highlight"],
-    "suggested_action": "The next logical step the user should take (optional)"
+    "summary": "One sentence: what is the CORE purpose/value of this page",
+    "hidden_selectors": ["selector1", "selector2", "selector3", ...],
+    "highlight_selectors": ["selector1", "selector2", ...],
+    "suggested_action": "The single most important action the user should take"
 }}
 
-Guidelines:
-- For beginners: Hide advanced options, highlight primary actions
-- For experts: Keep technical details, hide tutorial content
-- Consider the user's past behavior from their history
-- Be specific with CSS selectors (use classes, IDs, or element types)
-- Suggested action should be clear and actionable
+**AGGRESSIVE HIDING - Remove ALL of the following**:
 
-Return ONLY valid JSON, no additional text."""
+1. **Universal Clutter** (hide on EVERY page):
+   - Ads: .ad, .ads, .advertisement, [class*="ad-"], [class*="advert"], aside[class*="ad"]
+   - Cookie/GDPR banners: [class*="cookie"], [class*="gdpr"], [class*="consent"], #cookie-banner
+   - Popups/Modals: .modal, .popup, [role="dialog"], .overlay, [class*="popup"]
+   - Social media: .social-share, [class*="social"], .share-buttons, .facebook-plugin, .twitter-widget
+   - Newsletter signups: [class*="newsletter"], [class*="subscribe"], [class*="email-signup"]
+   - Promotional banners: .promo, .promotion, [class*="banner"], [class*="promotional"]
+   - Related/Recommended: [class*="related"], [class*="recommend"], [class*="you-may-like"], [class*="trending"]
+   - Comments sections: #comments, .comments-section, [class*="comment"]
+   - Footers (usually): footer, [role="contentinfo"], .site-footer
+   - Navigation breadcrumbs: .breadcrumb, [class*="breadcrumb"]
+
+2. **Contextual Clutter** (based on page type):
+   - **Documentation/Articles**: 
+     * Table of contents (if not needed): .toc, [class*="table-of-contents"], aside.sidebar
+     * "Edit this page" buttons: [class*="edit"], .edit-button
+     * Version switchers: [class*="version-select"]
+     * Unnecessary navigation: nav:not(.primary-nav), aside.secondary-nav
+   
+   - **E-commerce**:
+     * Review sections (if not shopping): [class*="review"], [class*="rating"]
+     * "People also bought": [class*="also-bought"], [class*="recommendation"]
+     * Store locators (if not needed): [class*="store-locator"]
+   
+   - **News/Blogs**:
+     * Author bio boxes: [class*="author-bio"], .author-card
+     * "Trending now" sections: [class*="trending"]
+     * Auto-play video widgets: [autoplay], .video-player:not(.main-video)
+   
+   - **Forms/Login**:
+     * "Sign in with" social buttons (unless that's the goal): [class*="social-login"]
+     * Marketing checkboxes: [class*="marketing"], [class*="promotional"]
+
+3. **Skill-Level Based Hiding**:
+   - **For Experts ({technical_level})**: 
+     * Getting started guides: [class*="getting-started"], [class*="tutorial"]
+     * Tooltips/Help text: [class*="tooltip"], [class*="help-text"], [role="tooltip"]
+     * Beginner warnings: [class*="beginner"], [class*="warning"]
+     * Step-by-step wizards: [class*="wizard"], [class*="step-by-step"]
+   
+   - **For Beginners ({technical_level})**:
+     * Advanced settings panels: [class*="advanced"], [class*="expert-mode"]
+     * API documentation: [class*="api-doc"], [class*="reference"]
+     * Code examples (unless coding page): pre, code.large-block
+     * Technical jargon sections: [class*="technical"]
+
+4. **Irrelevant Content Indicators** (hide if detected):
+   - Elements with "sponsored", "promoted", "featured-partner"
+   - Elements with excessive links (link farms): check for >10 links in small area
+   - Auto-playing media controls
+   - "Download our app" banners: [class*="app-download"], [class*="mobile-app"]
+   - Language switchers (if not needed): [class*="language-switch"], [class*="locale"]
+   - Print/PDF buttons: [class*="print"], [onclick*="print"]
+
+**HIGHLIGHTING - Show ONLY the essential**:
+- Main content container: main, article, [role="main"], .main-content, #content
+- Primary action button: .btn-primary, button[type="submit"], .primary-cta, [class*="primary-action"]
+- Critical headings: h1, .page-title, .article-title
+- Active form fields (if form page): input:not([type="hidden"]), textarea, select
+- Key information blocks: .important, [class*="highlight"], .alert-info
+- Search bars (if search is the goal): [type="search"], .search-box
+
+**Power User Mode** ({technical_level == 'expert'}):
+- Be EXTRA aggressive with hiding
+- Assume the user knows what they're doing
+- Hide all hand-holding, tutorials, explanations
+- Show only actionable content and technical details
+- Eliminate redundancy ruthlessly
+
+**Output Requirements**:
+- Minimum 5-10 hidden_selectors (aim for 8-15 for thorough cleanup)
+- Minimum 2-4 highlight_selectors (keep it focused)
+- NO empty arrays
+- Use specific, valid CSS selectors
+- Prefer class-based selectors over IDs when possible
+- Use attribute selectors [class*="..."] to catch variations
+
+Return ONLY valid JSON, no markdown, no explanations."""
 
         # Step 4: Call Gemini API
         logger.info("Calling Gemini API for page analysis...")

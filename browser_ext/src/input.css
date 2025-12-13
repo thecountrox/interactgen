@@ -17,7 +17,45 @@
 /* Extension-specific styles */
 @layer components {
   .flowstate-highlight {
-    @apply border-4 border-yellow-400 box-border;
+    position: relative;
+    box-sizing: border-box;
+    border-radius: 8px;
+    box-shadow: 0 0 0 3px rgba(54, 226, 123, 0.4),
+                0 0 20px rgba(54, 226, 123, 0.3),
+                0 0 40px rgba(54, 226, 123, 0.1);
+    background-color: rgba(54, 226, 123, 0.05) !important;
+    z-index: 1000;
+    transition: all 0.3s ease;
+  }
+
+  .flowstate-highlight::before {
+    content: '';
+    position: absolute;
+    top: -3px;
+    left: -3px;
+    right: -3px;
+    bottom: -3px;
+    border-radius: 8px;
+    border: 2px solid #36e27b;
+    pointer-events: none;
+    animation: flowstate-highlight-pulse 2s ease-in-out infinite;
+  }
+
+  @keyframes flowstate-highlight-pulse {
+    0%, 100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 0.6;
+      transform: scale(1.01);
+    }
+  }
+
+  .flowstate-dimmed {
+    opacity: 0.3 !important;
+    filter: grayscale(20%);
+    transition: opacity 0.4s ease, filter 0.4s ease;
   }
 
   .flowstate-toast {
@@ -30,6 +68,83 @@
   .flowstate-toast.show {
     @apply opacity-100;
     transform: translateY(0);
+  }
+
+  /* Animated gradient overlay for action execution */
+  #flowstate-execution-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 2147483646;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  #flowstate-execution-overlay::before,
+  #flowstate-execution-overlay::after {
+    content: '';
+    position: absolute;
+    pointer-events: none;
+  }
+
+  /* Top edge gradient */
+  #flowstate-execution-overlay::before {
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 25%;
+    background: linear-gradient(
+      180deg,
+      rgba(54, 226, 123, 0.6),
+      rgba(59, 130, 246, 0.5),
+      rgba(168, 85, 247, 0.4),
+      transparent
+    );
+    background-size: 200% 200%;
+    animation: flowstate-gradient-shift 2s ease infinite;
+  }
+
+  /* Bottom gradient */
+  #flowstate-execution-overlay::after {
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 25%;
+    background: linear-gradient(
+      0deg,
+      rgba(54, 226, 123, 0.6),
+      rgba(59, 130, 246, 0.5),
+      rgba(168, 85, 247, 0.4),
+      transparent
+    );
+    background-size: 200% 200%;
+    animation: flowstate-gradient-shift 2s ease infinite reverse;
+  }
+
+  /* Left and right edge gradients using box-shadows */
+  #flowstate-execution-overlay {
+    box-shadow: 
+      inset 120px 0 100px -50px rgba(54, 226, 123, 0.5),
+      inset -120px 0 100px -50px rgba(168, 85, 247, 0.5);
+  }
+
+  #flowstate-execution-overlay.active {
+    opacity: 1;
+  }
+
+  @keyframes flowstate-gradient-shift {
+    0% {
+      background-position: 0% 0%;
+    }
+    50% {
+      background-position: 100% 100%;
+    }
+    100% {
+      background-position: 0% 0%;
+    }
   }
 
   .glass-border {
